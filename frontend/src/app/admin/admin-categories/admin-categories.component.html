@@ -1,0 +1,78 @@
+<div class="categories-container">
+  <div class="categories-header">
+    <button class="add-btn" (click)="openCreateModal()">
+      <span class="add-icon">+</span>
+      Add Category
+    </button>
+  </div>
+
+  @if (toastMessage) {
+    <div class="toast-message">{{ toastMessage }}</div>
+  }
+
+  @if (loading) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading categories...</p>
+    </div>
+  }
+
+  @if (error) {
+    <div class="error-message">{{ error }}</div>
+  }
+
+  @if (!loading && !error) {
+    <div class="categories-table">
+      <div class="table-header">
+        <div class="header-cell">ID</div>
+        <div class="header-cell">Name</div>
+        <div class="header-cell">Actions</div>
+      </div>
+
+      @for (category of categories; track category.id) {
+        <div class="table-row">
+          <div class="table-cell">{{ category.id }}</div>
+          <div class="table-cell">{{ category.name }}</div>
+          <div class="table-cell actions">
+            <button class="edit-btn" (click)="openEditModal(category)">
+              Edit
+            </button>
+            <button class="delete-btn" (click)="deleteCategory(category)">
+              Delete
+            </button>
+          </div>
+        </div>
+      }
+
+      @if (categories.length === 0) {
+        <div class="empty-state">
+          <p>No categories found</p>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Category Modal -->
+  @if (showModal) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>{{ editingCategory ? 'Edit Category' : 'Add Category' }}</h2>
+          <button class="close-btn" (click)="closeModal()">×</button>
+        </div>
+        
+        <form [formGroup]="categoryForm" (ngSubmit)="saveCategory()" class="modal-form">
+          <div class="form-group">
+            <label for="name">Category Name</label>
+            <input type="text" id="name" formControlName="name" placeholder="Enter category name" class="form-input">
+          </div>
+          
+          <div class="modal-actions">
+            <button type="button" class="cancel-btn" (click)="closeModal()">Cancel</button>
+            <button type="submit" class="save-btn" [disabled]="!categoryForm.valid">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div> 

@@ -1,0 +1,183 @@
+<div class="users-container">
+  <div class="users-header">
+    <button class="add-user-btn" (click)="showAddUserForm()">Add New User</button>
+  </div>
+
+  @if (toastMessage) {
+    <div class="toast-message">{{ toastMessage }}</div>
+  }
+
+  @if (loading) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading users...</p>
+    </div>
+  }
+
+  @if (error) {
+    <div class="error-message">{{ error }}</div>
+  }
+
+  @if (!loading && !error) {
+    <!-- Users Table -->
+    <div class="users-table">
+      <div class="table-header">
+        <div class="header-cell">Name</div>
+        <div class="header-cell">Email</div>
+        <div class="header-cell">Role</div>
+        <div class="header-cell">Phone</div>
+        <div class="header-cell">Actions</div>
+      </div>
+
+      @for (user of users; track user.email) {
+        <div class="table-row">
+          <div class="table-cell">{{ user.name }}</div>
+          <div class="table-cell">{{ user.email }}</div>
+          <div class="table-cell">
+            <span class="role-badge" [class]="getRoleClass(user.role)">
+              {{ user.role }}
+            </span>
+          </div>
+          <div class="table-cell">{{ user.phone || 'N/A' }}</div>
+          <div class="table-cell actions">
+            <button class="edit-btn" (click)="editUser(user)">Edit</button>
+            <button class="delete-btn" (click)="deleteUser(user)">Delete</button>
+          </div>
+        </div>
+      }
+
+      @if (users.length === 0) {
+        <div class="empty-state">
+          <p>No users found</p>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Add/Edit User Modal -->
+  @if (showModal) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>{{ editingUser ? 'Edit User' : 'Add New User' }}</h2>
+          <button class="close-btn" (click)="closeModal()">×</button>
+        </div>
+        
+        <form [formGroup]="userForm" (ngSubmit)="saveUser()" class="user-form">
+          <div class="form-group">
+            <label for="modal-name">Name *</label>
+            <input 
+              id="modal-name"
+              type="text" 
+              formControlName="name"
+              placeholder="Enter name"
+              class="form-input"
+            />
+            @if (userForm.get('name')?.invalid && userForm.get('name')?.touched) {
+              <div class="error-message">
+                Name is required and must be at least 2 characters
+              </div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="modal-email">Email *</label>
+            <input 
+              id="modal-email"
+              type="email" 
+              formControlName="email"
+              placeholder="Enter email"
+              class="form-input"
+              [readonly]="editingUser"
+            />
+            @if (userForm.get('email')?.invalid && userForm.get('email')?.touched) {
+              <div class="error-message">
+                @if (userForm.get('email')?.errors?.['required']) {
+                  Valid email is required
+                }
+                @if (userForm.get('email')?.errors?.['email']) {
+                  Please enter a valid email address
+                }
+              </div>
+            }
+            @if (!editingUser && userForm.hasError('emailExists') && userForm.get('email')?.touched) {
+              <div class="error-message">
+                This email address is already registered
+              </div>
+            }
+          </div>
+
+          @if (!editingUser) {
+            <div class="form-group">
+              <label for="modal-password">Password *</label>
+              <input 
+                id="modal-password"
+                type="password" 
+                formControlName="password"
+                placeholder="Enter password"
+                class="form-input"
+              />
+              @if (userForm.get('password')?.invalid && userForm.get('password')?.touched) {
+                <div class="error-message">
+                  Password (min 6 chars) is required
+                </div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="modal-confirm-password">Confirm Password *</label>
+              <input 
+                id="modal-confirm-password"
+                type="password" 
+                formControlName="confirmPassword"
+                placeholder="Confirm password"
+                class="form-input"
+              />
+              @if (userForm.hasError('notMatching') && userForm.get('confirmPassword')?.touched) {
+                <div class="error-message">
+                  Passwords do not match
+                </div>
+              }
+            </div>
+          }
+
+          <div class="form-group">
+            <label for="modal-role">Role *</label>
+            <select id="modal-role" formControlName="role" class="form-input">
+              <option value="USER">USER</option>
+              <option value="ADMIN">ADMIN</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="modal-phone">Phone *</label>
+            <input 
+              id="modal-phone"
+              type="text" 
+              formControlName="phone"
+              placeholder="Enter phone (e.g., 0123456789)"
+              class="form-input"
+            />
+            @if (userForm.get('phone')?.invalid && userForm.get('phone')?.touched) {
+              <div class="error-message">
+                @if (userForm.get('phone')?.errors?.['required']) {
+                  Phone number is required
+                }
+                @if (userForm.get('phone')?.errors?.['pattern']) {
+                  Phone number must start with 0 and be 10–11 digits
+                }
+              </div>
+            }
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="cancel-btn" (click)="closeModal()">Cancel</button>
+            <button type="submit" class="save-btn" [disabled]="userForm.invalid || saving">
+              {{ saving ? 'Saving...' : (editingUser ? 'Update User' : 'Add User') }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div> 

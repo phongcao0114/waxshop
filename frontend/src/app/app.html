@@ -1,0 +1,47 @@
+<div class="layout-bg">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-title">HOPO Waxworks</div>
+    </div>
+    <nav class="sidebar-nav">
+      @if (user$ | async; as user) {
+        <div class="sidebar-welcome">Welcome {{ user.name }}</div>
+        @if (user.role === 'ADMIN') {
+          <a routerLink="/admin/dashboard" routerLinkActive="active" class="sidebar-link">Dashboard</a>
+          <a routerLink="/admin/users" routerLinkActive="active" class="sidebar-link">Users</a>
+          <a routerLink="/admin/categories" routerLinkActive="active" class="sidebar-link">Categories</a>
+          <a routerLink="/admin/products" routerLinkActive="active" class="sidebar-link">Products</a>
+          <a routerLink="/admin/orders" routerLinkActive="active" class="sidebar-link">Orders</a>
+        } @else {
+          <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidebar-link">
+            Home
+          </a>
+          <a routerLink="/cart" routerLinkActive="active" class="sidebar-link cart-link">
+            Cart
+            <span class="cart-count">{{ cartCount$ | async }}</span>
+          </a>
+          <a routerLink="/orders/latest" routerLinkActive="active" class="sidebar-link">
+            Orders
+          </a>
+        }
+      } @else {
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="sidebar-link">
+          Home
+        </a>
+      }
+    </nav>
+    <div class="sidebar-auth">
+      @if (user$ | async; as user) {
+        <button class="auth-btn logout-btn" (click)="logout()">Logout</button>
+      } @else {
+        <a routerLink="/login" routerLinkActive="active" class="auth-btn login-btn">Login</a>
+      }
+    </div>
+  </aside>
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
+<app-footer></app-footer>
+<app-refresh-indicator></app-refresh-indicator>
+<app-error-notification></app-error-notification>

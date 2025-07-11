@@ -1,0 +1,19 @@
+@if (loading) {
+  <div class="health-loading">
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+    <span>Loading health status...</span>
+  </div>
+}
+@if (error) {
+  <div class="health-error">
+    <mat-icon color="warn">error</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+}
+@if (!loading && !error) {
+  <div class="health-success">
+    <mat-icon color="primary">check_circle</mat-icon>
+    <pre>{{ data | json }}</pre>
+  </div>
+}
+

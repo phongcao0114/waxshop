@@ -1,0 +1,199 @@
+<div class="orders-container">
+  <div class="orders-header">
+    @if (currentFilter) {
+      <div class="filter-indicator">
+        <span class="filter-label">Filtered by:</span>
+        <span class="filter-value">{{ currentFilter }}</span>
+        <button class="clear-filter-btn" (click)="clearFilter()">Clear Filter</button>
+      </div>
+    }
+  </div>
+
+  @if (toastMessage) {
+    <div class="toast-message">{{ toastMessage }}</div>
+  }
+
+  @if (loading) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading orders...</p>
+    </div>
+  }
+
+  @if (error) {
+    <div class="error-message">{{ error }}</div>
+  }
+
+  @if (!loading && !error) {
+    <div class="orders-table">
+      <div class="table-header">
+        <div class="header-cell">Order ID</div>
+        <div class="header-cell">Customer</div>
+        <div class="header-cell">Date</div>
+        <div class="header-cell">Items</div>
+        <div class="header-cell">Total</div>
+        <div class="header-cell">Status</div>
+        <div class="header-cell">Actions</div>
+      </div>
+
+      @for (order of orders; track order.id) {
+        <div class="table-row">
+          <div class="table-cell">#{{ order.id }}</div>
+          <div class="table-cell">{{ order.userEmail }}</div>
+          <div class="table-cell">{{ order.date | date:'short' }}</div>
+          <div class="table-cell">{{ calculateTotalItems(order) }} items</div>
+          <div class="table-cell">${{ order.totalAmount }}</div>
+          <div class="table-cell">
+            <span class="status-badge" [class]="getStatusClass(order.status)">
+              {{ order.status }}
+            </span>
+            @if (canUpdateStatus(order.status)) {
+              <div class="status-flow-info">
+                <small>{{ getStatusFlowDescription(order.status) }}</small>
+              </div>
+            }
+          </div>
+          <div class="table-cell actions">
+            <button class="view-btn" (click)="viewOrderDetails(order)">
+              View
+            </button>
+            @if (canUpdateStatus(order.status)) {
+              <select 
+                class="status-select"
+                (change)="onStatusChange($event, order)"
+                [value]="order.status"
+              >
+                <option [value]="order.status">{{ order.status }}</option>
+                @for (status of getStatusOptions(order.status); track status) {
+                  <option [value]="status">{{ status }}</option>
+                }
+              </select>
+            } @else {
+              <span class="status-disabled">No updates allowed</span>
+            }
+          </div>
+        </div>
+      }
+
+      @if (orders.length === 0) {
+        <div class="empty-state">
+          <p>No orders found</p>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Order Details Modal -->
+  @if (showOrderDetails && selectedOrder) {
+    <div class="modal-overlay" (click)="closeOrderDetails()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Order #{{ selectedOrder.id }} Details</h2>
+          <button class="close-btn" (click)="closeOrderDetails()">×</button>
+        </div>
+        
+        <div class="order-details">
+          <div class="detail-section">
+            <h3>Customer Information</h3>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">Email:</span>
+                <span class="detail-value">{{ selectedOrder.userEmail }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Phone:</span>
+                <span class="detail-value">{{ selectedOrder.phoneNumber }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h3>Shipping Address</h3>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">Address:</span>
+                <span class="detail-value">{{ selectedOrder.shippingAddress }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">City:</span>
+                <span class="detail-value">{{ selectedOrder.shippingCity }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Postal Code:</span>
+                <span class="detail-value">{{ selectedOrder.shippingPostalCode }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Country:</span>
+                <span class="detail-value">{{ selectedOrder.shippingCountry }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h3>Order Items</h3>
+            <div class="items-table">
+              <div class="items-header">
+                <div class="item-cell">Product</div>
+                <div class="item-cell">Quantity</div>
+                <div class="item-cell">Price</div>
+                <div class="item-cell">Total</div>
+              </div>
+              @for (item of selectedOrder.items; track item.id) {
+                <div class="item-row">
+                  <div class="item-cell">{{ item.productName }}</div>
+                  <div class="item-cell">{{ item.quantity }}</div>
+                  <div class="item-cell">${{ item.price }}</div>
+                  <div class="item-cell">${{ item.price * item.quantity }}</div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h3>Order Summary</h3>
+            <div class="summary-grid">
+              <div class="summary-item">
+                <span class="summary-label">Subtotal:</span>
+                <span class="summary-value">${{ selectedOrder.totalAmount - selectedOrder.shippingFee }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Shipping Fee:</span>
+                <span class="summary-value">${{ selectedOrder.shippingFee }}</span>
+              </div>
+              <div class="summary-item total">
+                <span class="summary-label">Total:</span>
+                <span class="summary-value">${{ selectedOrder.totalAmount }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h3>Order Status</h3>
+            <div class="status-update">
+              <span class="current-status" [class]="getStatusClass(selectedOrder.status)">
+                {{ selectedOrder.status }}
+              </span>
+              @if (canUpdateStatus(selectedOrder.status)) {
+                <div class="status-flow-info">
+                  <p>{{ getStatusFlowDescription(selectedOrder.status) }}</p>
+                  <select 
+                    class="status-select"
+                    (change)="onModalStatusChange($event)"
+                    [value]="selectedOrder.status"
+                  >
+                    <option [value]="selectedOrder.status">{{ selectedOrder.status }}</option>
+                    @for (status of getStatusOptions(selectedOrder.status); track status) {
+                      <option [value]="status">{{ status }}</option>
+                    }
+                  </select>
+                </div>
+              } @else {
+                <p class="status-disabled">No further updates allowed for this order.</p>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div> 

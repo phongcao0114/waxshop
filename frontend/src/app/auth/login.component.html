@@ -1,0 +1,33 @@
+<div class="auth-page-container">
+  <div class="auth-card">
+    <h2 class="auth-title">Login</h2>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="auth-field">
+        <label for="email">Email *</label>
+        <input id="email" formControlName="email" type="email" />
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+          <div class="error-message">
+            Valid email is required
+          </div>
+        }
+      </div>
+      <div class="auth-field">
+        <label for="password">Password *</label>
+        <input id="password" formControlName="password" type="password" />
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+          <div class="error-message">
+            Password (min 6 chars) is required
+          </div>
+        }
+      </div>
+      <button type="submit" [disabled]="loading || form.invalid" class="auth-btn">Login</button>
+      @if (loading) {
+        <div class="spinner">Loading...</div>
+      }
+      @if (error) {
+        <div class="toast error">{{ error }}</div>
+      }
+    </form>
+    <p class="auth-link-text">Don't have an account? <a routerLink="/register" class="auth-link">Register</a></p>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+<nav class="navbar">
+  <span class="logo">EcommerceApp</span>
+  <div class="nav-links">
+    @if (user$ | async; as user) {
+      <span class="welcome">Welcome, {{ user.name }}</span>
+      <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+      <a mat-button routerLink="/orders/latest" routerLinkActive="active">Orders</a>
+      <a mat-button class="cart-btn" routerLink="/cart" routerLinkActive="active">
+        Cart
+        <span class="cart-count">{{ cartCount$ | async }}</span>
+      </a>
+      @if (user.role === 'ADMIN') {
+        <a mat-button routerLink="/admin/dashboard" routerLinkActive="active" class="admin-link">Admin Dashboard</a>
+      }
+      <a mat-button class="logout-btn" (click)="logout()">Logout</a>
+    } @else {
+      <a mat-button routerLink="/login" routerLinkActive="active">Login</a>
+    }
+  </div>
+</nav>

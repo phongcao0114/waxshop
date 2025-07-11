@@ -1,0 +1,43 @@
+<div class="home-container">
+  @if (toastMessage) {
+    <div class="toast-message">{{ toastMessage }}</div>
+  }
+  
+  <div class="home-header">
+    <div class="home-title"></div>
+    <div class="home-subtitle"></div>
+  </div>
+  <div class="search-bar">
+    <input [(ngModel)]="searchQuery" (keyup.enter)="searchProducts()" placeholder="Search products..." />
+    <button (click)="searchProducts()">Search</button>
+  </div>
+
+  @if (loading) {
+    <div class="loading">
+      <mat-spinner></mat-spinner>
+    </div>
+  }
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
+
+  <div class="product-list">
+    @for (product of products; track product.id) {
+      <div class="product-card">
+        <button class="add-to-cart-btn" (click)="addToCart(product)">+</button>
+        <div class="product-image-container">
+          <img [src]="getImageUrl(product)" alt="{{product.name}}" class="product-image" />
+        </div>
+        <div class="product-info">
+          <div class="product-header">
+            <h2 class="product-name">{{ product.name }}</h2>
+            <div class="product-price">${{ product.price }}</div>
+          </div>
+          <p class="category">{{ product.category.name }}</p>
+          <p class="description">{{ product.description }}</p>
+          <div class="product-badge">New</div>
+        </div>
+      </div>
+    }
+  </div>
+</div> 

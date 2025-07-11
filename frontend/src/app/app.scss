@@ -1,0 +1,202 @@
+.layout-bg {
+  display: flex;
+  align-items: stretch;
+  min-height: 100vh;
+  background: #dddddd;
+  position: relative;
+  padding: 40px 40px 40px 40px;
+  height: 100%;
+}
+
+.sidebar {
+  width: 270px;
+  background: #f5f5f5;
+  border-radius: 18px 0 0 18px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.10);
+  position: relative;
+  box-sizing: border-box;
+}
+.sidebar-logo {
+  margin-top: 40px;
+  text-align: center;
+}
+.sidebar-logo-img {
+  width: 70px;
+  margin-bottom: 10px;
+}
+.sidebar-title {
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 25px;
+  color: #363636;
+}
+.sidebar-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: 10px;
+  color: #929292;
+  margin-top: 4px;
+}
+.sidebar-nav {
+  margin-top: 60px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  color: rgba(0,0,0,0.24);
+  text-decoration: none;
+  padding: 8px 0 8px 50px;
+  border-radius: 20px 0 0 20px;
+  transition: background 0.2s, color 0.2s;
+  cursor: pointer;
+  position: relative;
+}
+.sidebar-link.active, .sidebar-link:hover {
+  background: #fff;
+  color: #000;
+}
+.cart-link {
+  position: relative;
+}
+.cart-count {
+  position: absolute;
+  top: -8px;
+  right: 20px;
+  background: #e53935;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 2px 8px;
+  min-width: 20px;
+  text-align: center;
+  display: inline-block;
+  line-height: 1.2;
+  font-family: 'Roboto', sans-serif;
+}
+.sidebar-welcome {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #666;
+  text-align: center;
+  padding: 8px 20px;
+  margin: 0 20px;
+  background: rgba(255,255,255,0.7);
+  border-radius: 10px;
+  word-break: break-word;
+}
+.sidebar-offer {
+  margin-top: 60px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.offer-btn {
+  background: #33c3a2;
+  color: #fff;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 800;
+  font-size: 26px;
+  border: none;
+  border-radius: 20px;
+  padding: 16px 40px 16px 30px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.10);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.offer-btn:hover {
+  background: #28a98c;
+}
+.offer-icon {
+  width: 35px;
+  margin-right: 12px;
+}
+.sidebar-auth {
+  margin-top: 30px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.auth-btn {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  border: none;
+  border-radius: 15px;
+  padding: 12px 30px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+.login-btn {
+  background: #33c3a2;
+  color: #fff;
+}
+.login-btn:hover {
+  background: #28a98c;
+  transform: translateY(-2px);
+}
+.logout-btn {
+  background: #ff6b6b;
+  color: #fff;
+}
+.logout-btn:hover {
+  background: #ff5252;
+  transform: translateY(-2px);
+}
+.sidebar-socials {
+  margin-top: auto;
+  margin-bottom: 40px;
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  width: 100%;
+}
+.sidebar-social {
+  width: 32px;
+  height: 32px;
+}
+
+.main-content {
+  flex: 1;
+  margin: 0;
+  background: #fff;
+  border-radius: 0 50px 50px 0;
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.10);
+  min-height: 0;
+  padding: 40px 40px 40px 40px;
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1100px) {
+  .layout-bg {
+    padding: 0;
+  }
+  .sidebar {
+    display: none;
+  }
+  .main-content {
+    margin-left: 0;
+    border-radius: 0;
+    padding: 20px 10px;
+  }
+}

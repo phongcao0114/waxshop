@@ -1,0 +1,53 @@
+1. Prompt 1 – Project Setup & Layout
+You are a professional Angular architect. Generate the initial setup for a modular Angular 20+ SPA for an EcommerceApp. Include:
+- AppModule, AppRoutingModule
+- AuthGuard and AdminGuard
+- Angular Material integration
+- Layout components: Navbar, Footer, Admin Sidebar
+- Lazy-loaded feature modules: Auth, User, Admin, Shared
+- Routing configuration for:
+  - /login, /register, /health
+  - /, /product/:id, /cart, /checkout, /orders, /profile
+  - /admin/products, /admin/categories, /admin/orders
+  - /unauthorized, **
+Use clean Angular best practices and folder structure.
+
+2. Prompt 2 – Auth (Login + Register)
+Generate the complete Auth feature module with:
+- `/login`: Login form using ReactiveForms, POST /api/auth/login, validation, error handling
+- `/register`: Register form, POST /api/auth/register, validation
+- AuthService: login(), register(), store JWT in localStorage
+- Redirect based on role: USER -> `/`, ADMIN -> `/admin/products`
+- Add loading spinner and toast notifications
+Return full code for components (.ts, .html, .scss) and service.
+
+3. Prompt 3 – USER Pages (Shop, Cart, Orders, Profile)
+Generate the complete User feature module:
+- `/`: Product list with filtering (GET /api/products, /products/search)
+- `/product/:id`: Product detail (GET /api/products/{id})
+- `/cart`: View/edit cart (GET, POST, PUT, DELETE /api/cart)
+- `/checkout`: Checkout form (POST /api/orders/place), show total
+- `/orders`: User order list (GET /api/orders/user/{userId})
+- `/profile`: Profile form (GET, PUT /api/users/profile)
+Use Angular Material (cards, forms, tables), toast, spinners. Add services per page. Return full code files.
+
+4. Prompt 4 – ADMIN Pages (Products, Categories, Orders)
+Generate the Admin feature module:
+- `/admin/products`: Product CRUD (assume all endpoints available)
+- `/admin/categories`: CRUD for categories (GET, POST, PUT, DELETE /api/admin/categories)
+- `/admin/orders`: View and update all orders (GET /api/orders/all, PATCH status)
+Follow APIs defined in README. Include admin sidebar navigation. Use Angular Material for tables/forms. Add form validation, toast, and loading spinner. Return .ts, .html, .scss, and services.
+
+5. Prompt 5 – Fallback & Access Pages
+Generate fallback and access pages:
+- `/unauthorized`: Show access denied message
+- `**`: Page not found with back-to-home button
+Use Angular Material for layout and messages.
+
+6. Prompt 6 – Shared Utilities (Optional)
+Generate shared utilities:
+- ToastService using MatSnackBar
+- LoadingService with spinner overlay
+- ApiErrorInterceptor: catch and handle HTTP errors
+- AuthInterceptor: Attach JWT to Authorization header
+- SharedModule: Exports Angular Material modules and common components
