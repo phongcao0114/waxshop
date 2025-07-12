@@ -188,4 +188,14 @@ export class HomeComponent implements OnInit {
       });
     }
   }
+
+  scrollToGallery() {
+    const gallerySection = document.getElementById('gallery');
+    if (gallerySection) {
+      gallerySection.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    }
+  }
 } 

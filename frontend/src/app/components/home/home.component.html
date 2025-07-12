@@ -28,7 +28,7 @@
             <div class="hero-content">
                 <h1 class="hero-title">Romance of Europe</h1>
                 <p class="hero-subtitle">Where Greek Beauty Meets Parisian Passion</p>
-                <button class="hero-btn">Explore</button>
+                <button class="hero-btn" (click)="scrollToGallery()">Explore</button>
             </div>
             <div class="hero-visual">
                 <div class="gradient-circle"></div>
@@ -37,7 +37,7 @@
         </section>
 
         <!-- Gallery Section -->
-        <section class="gallery">
+        <section class="gallery" id="gallery">
             <h2 class="section-title">Gallery of Eternal Muses</h2>
             @if (loading) {
                 <div class="loading-container">
