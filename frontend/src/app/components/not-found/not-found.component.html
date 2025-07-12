@@ -1,5 +1,45 @@
-<div class="not-found">
-  <mat-icon color="warn">error_outline</mat-icon>
-  <span>Page not found.</span>
+<div class="parisian-container">
+  <!-- Header Section -->
+  <header class="header">
+    <nav class="nav">
+      <ul class="nav-menu">
+        @if (user$ | async; as user) {
+          <li>
+            <a routerLink="/cart" routerLinkActive="active">
+              Cart <span class="cart-count">{{ cartCount$ | async }}</span>
+            </a>
+          </li>
+          <li><a routerLink="/orders/latest" routerLinkActive="active">Orders</a></li>
+          @if (user.role === 'ADMIN') {
+            <li><a routerLink="/admin/dashboard" routerLinkActive="active">Dashboard</a></li>
+          }
+          <li><a href="#" (click)="logout(); $event.preventDefault()">Logout</a></li>
+        } @else {
+          <li><a routerLink="/login" routerLinkActive="active">Login</a></li>
+        }
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Not Found Section -->
+  <section class="not-found-section">
+    <div class="not-found-content">
+      <div class="not-found-icon">🔍</div>
+      <h2 class="section-title">Page Not Found</h2>
+      <p class="not-found-message">The page you're looking for doesn't exist.</p>
+      <a routerLink="/" class="home-btn">Return Home</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>ROMANCE OF EUROPE</h3>
+        <p>Where European romance and Greek beauty unite</p>
+        © 2024 Romance of Europe. All rights reserved.
+      </div>
+    </div>
+  </footer>
 </div>
 

@@ -1,8 +1,298 @@
-.health-loading, .health-error, .health-success {
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Montserrat", sans-serif;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(26, 26, 26, 0.8) 50%, rgba(45, 45, 45, 0.7) 100%), radial-gradient(circle at 20% 80%, rgba(255, 107, 53, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 107, 53, 0.05) 0%, transparent 50%), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="eiffel" patternUnits="userSpaceOnUse" width="20" height="20"><path d="M10 0 L12 8 L8 8 L10 0 M8 8 L12 8 L10 20" stroke="%23ff6b35" stroke-width="0.5" fill="none" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23eiffel)"/></svg>');
+  color: #ffffff;
+  line-height: 1.6;
+  overflow-x: hidden;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent 40%, rgba(255, 107, 53, 0.03) 50%, transparent 60%), linear-gradient(-45deg, transparent 40%, rgba(255, 107, 53, 0.02) 50%, transparent 60%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+body {
+  background-attachment: fixed;
+}
+
+.parisian-container {
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4 {
+  font-family: "Playfair Display", serif;
+  font-weight: 700;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-attachment: fixed;
+}
+
+.header .nav {
   display: flex;
+  justify-content: flex-end;
   align-items: center;
-  gap: 1rem;
-  margin-top: 2rem;
+  padding: 1rem 5%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header .nav .nav-menu {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+}
+
+.header .nav .nav-menu a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.header .nav .nav-menu a::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
+  transition: width 0.3s ease;
+}
+
+.header .nav .nav-menu a:hover {
+  color: #ff6b35;
+}
+
+.header .nav .nav-menu a:hover::after {
+  width: 100%;
+}
+
+.health-section {
+  padding: 120px 5% 4rem;
+  min-height: 100vh;
+}
+
+.health-section::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 25% 25%, rgba(255, 107, 53, 0.05) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(255, 107, 53, 0.03) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.health-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.loading-container p {
+  color: #cccccc;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background: rgba(255, 107, 107, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 107, 107, 0.1);
+  border-radius: 20px;
+  margin: 2rem auto;
+  max-width: 500px;
+}
+
+.error-container .error-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.error-container h3 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #ff6b6b;
+}
+
+.error-container p {
+  color: #cccccc;
+  font-size: 1.1rem;
+}
+
+.health-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  margin: 2rem auto;
+  max-width: 600px;
+}
+
+.health-success .success-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.health-success h3 {
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  color: #ff6b35;
+}
+
+.health-data {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  padding: 1.5rem;
+  overflow-x: auto;
+}
+
+.health-data pre {
+  color: #cccccc;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.footer {
+  margin-top: 4rem;
+}
+
+.footer .footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.footer .footer-content .footer-section h3 {
+  color: #ff6b35;
+  margin-bottom: 1rem;
+}
+
+.footer .footer-content .footer-section p {
+  color: #cccccc;
+  margin-bottom: 0.5rem;
+}
+
+.cart-count {
+  font-weight: bold;
+  color: inherit;
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  margin-left: 0.5em;
+  font-size: 1em;
+}
+
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 2rem;
+  }
+  
+  .header .nav .nav-menu {
+    gap: 1rem;
+  }
+  
+  .health-success,
+  .error-container {
+    margin: 1rem;
+    padding: 2rem 1rem;
+  }
+  
+  .health-data {
+    padding: 1rem;
+  }
+  
+  .health-data pre {
+    font-size: 0.8rem;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e55a2b;
 }
 

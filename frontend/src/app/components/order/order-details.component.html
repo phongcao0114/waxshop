@@ -1,76 +1,147 @@
-<div class="order-details-page">
-  <h2 class="order-details-title">Your Orders</h2>
-  @if (loading) {
-    <div class="order-loading">Loading...</div>
-  }
-  @if (error) {
-    <div class="order-error">{{ error }}</div>
-  }
-  @if (!loading && orders.length === 0) {
-    <div class="order-empty">You have no orders yet.</div>
-  }
-  @if (!loading && orders.length > 0) {
-    <div class="order-status-tabs">
-      @for (status of statusOptions; track status) {
-        <button type="button"
-                class="status-tab-btn"
-                [class.selected]="selectedStatus === status"
-                (click)="onStatusTabClick(status)">
-          {{ status }}
-          <span class="status-count-badge">{{ statusCounts[status] }}</span>
-        </button>
-      }
-    </div>
-    <div class="order-list">
-      @for (order of filteredOrders; track order.id) {
-        <div class="order-card" [class.cancelled]="order.status === 'CANCELLED'">
-          <div class="order-header">
-            <div class="order-id">Order #{{ order.id }}</div>
-            <div class="order-date">{{ order.createdAt | date:'medium' }}</div>
-            <div class="order-status" [class.cancelled]="order.status === 'CANCELLED'">{{ order.status }}</div>
+<div class="parisian-container">
+  <!-- Header Section -->
+  <header class="header">
+    <nav class="nav">
+      <ul class="nav-menu">
+        @if (user$ | async; as user) {
+          <li>
+            <a routerLink="/cart" routerLinkActive="active">
+              Cart <span class="cart-count">{{ cartCount$ | async }}</span>
+            </a>
+          </li>
+          <li><a routerLink="/orders/latest" routerLinkActive="active">Orders</a></li>
+          @if (user.role === 'ADMIN') {
+            <li><a routerLink="/admin/dashboard" routerLinkActive="active">Dashboard</a></li>
+          }
+          <li><a href="#" (click)="logout(); $event.preventDefault()">Logout</a></li>
+        } @else {
+          <li><a routerLink="/login" routerLinkActive="active">Login</a></li>
+        }
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Orders Section -->
+  <section class="orders-section">
+    <div class="orders-content">
+      <h2 class="section-title">Your Orders</h2>
+      
+      @if (loading) {
+        <div class="loading-container">
+          <mat-spinner></mat-spinner>
+          <p>Loading orders...</p>
+        </div>
+      } @else if (error) {
+        <div class="error-container">
+          <p>{{ error }}</p>
+        </div>
+      } @else if (orders.length === 0) {
+        <div class="orders-empty">
+          <div class="empty-icon">📦</div>
+          <h3>No orders yet</h3>
+          <p>Start shopping to see your orders here</p>
+          <a routerLink="/" class="shop-btn">Start Shopping</a>
+        </div>
+      } @else {
+        <div class="orders-container">
+          <div class="status-tabs">
+            @for (status of statusOptions; track status) {
+              <button type="button"
+                      class="status-tab"
+                      [class.active]="selectedStatus === status"
+                      (click)="onStatusTabClick(status)">
+                {{ status }}
+                <span class="status-count">{{ statusCounts[status] }}</span>
+              </button>
+            }
           </div>
-          <div class="order-info">
-            <div><strong>Shipping:</strong> {{ order.shippingAddress }}, {{ order.shippingCity }}, {{ order.shippingPostalCode }}, {{ order.shippingCountry }}</div>
-            <div><strong>Phone:</strong> {{ order.phoneNumber }}</div>
-            <div><strong>Payment:</strong> {{ order.paymentMethod }}</div>
-          </div>
-          <div class="order-items">
-            @for (item of order.items; track item.id) {
-              <div class="order-item">
-                <img [src]="getImageUrl(item)" alt="{{item.productName}}" class="order-item-img" />
-                <div class="order-item-info">
-                  <div class="order-item-name">{{item.productName}}</div>
-                  <div class="order-item-qty">Qty: {{item.quantity}}</div>
-                  <div class="order-item-price">Price: ${{item.price | number:'1.2-2'}}</div>
-                  <div class="order-item-total">Total: ${{item.total | number:'1.2-2'}}</div>
+          
+          <div class="orders-list">
+            @for (order of filteredOrders; track order.id) {
+              <div class="order-card" [class.cancelled]="order.status === 'CANCELLED'">
+                <div class="order-header">
+                  <div class="order-info">
+                    <h3 class="order-id">Order #{{ order.id }}</h3>
+                    <p class="order-date">{{ order.createdAt | date:'medium' }}</p>
+                  </div>
+                  <div class="order-status" [class.cancelled]="order.status === 'CANCELLED'">
+                    {{ order.status }}
+                  </div>
+                </div>
+                
+                <div class="order-details">
+                  <div class="shipping-info">
+                    <h4>Shipping Address</h4>
+                    <p>{{ order.shippingAddress }}, {{ order.shippingCity }}, {{ order.shippingPostalCode }}, {{ order.shippingCountry }}</p>
+                    <p><strong>Phone:</strong> {{ order.phoneNumber }}</p>
+                    <p><strong>Payment:</strong> {{ order.paymentMethod }}</p>
+                  </div>
+                  
+                  <div class="order-items">
+                    <h4>Items</h4>
+                    @for (item of order.items; track item.id) {
+                      <div class="order-item">
+                        <div class="item-image">
+                          <img [src]="getImageUrl(item)" alt="{{item.productName}}" />
+                        </div>
+                        <div class="item-details">
+                          <h5 class="item-name">{{item.productName}}</h5>
+                          <p class="item-qty">Quantity: {{item.quantity}}</p>
+                          <p class="item-price">Price: €{{item.price | number:'1.2-2'}}</p>
+                          <p class="item-total">Total: €{{item.total | number:'1.2-2'}}</p>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                  
+                  <div class="order-total">
+                    <h4>Order Total</h4>
+                    <p class="total-amount">€{{ order.totalAmount | number:'1.2-2' }}</p>
+                  </div>
+                  
+                  <div class="order-actions">
+                    @if (order.status === 'PENDING') {
+                      <button class="cancel-btn" 
+                        [disabled]="cancelingOrderId === order.id" 
+                        (click)="confirmCancel(order)">
+                        {{ cancelingOrderId === order.id ? 'Cancelling...' : 'Cancel Order' }}
+                      </button>
+                    }
+                    @if (order.status === 'SHIPPING') {
+                      <button class="received-btn" 
+                        [disabled]="markingDeliveredOrderId === order.id" 
+                        (click)="confirmMarkDelivered(order)">
+                        {{ markingDeliveredOrderId === order.id ? 'Marking...' : 'Mark as Received' }}
+                      </button>
+                    }
+                    @if (order.status === 'CANCELLED') {
+                      <span class="cancelled-label">Order Cancelled</span>
+                    }
+                  </div>
                 </div>
               </div>
             }
           </div>
-          <div class="order-total-row">
-            <strong>Total:</strong> ${{ order.totalAmount | number:'1.2-2' }}
-          </div>
-          <div class="order-actions">
-            @if (order.status === 'PENDING') {
-              <button class="order-cancel-btn" 
-                [disabled]="cancelingOrderId === order.id" 
-                (click)="confirmCancel(order)">
-                {{ cancelingOrderId === order.id ? 'Cancelling...' : 'Cancel Order' }}
-              </button>
-            }
-            @if (order.status === 'SHIPPING') {
-              <button class="order-received-btn" 
-                [disabled]="markingDeliveredOrderId === order.id" 
-                (click)="confirmMarkDelivered(order)">
-                {{ markingDeliveredOrderId === order.id ? 'Marking...' : 'Received' }}
-              </button>
-            }
-            @if (order.status === 'CANCELLED') {
-              <span class="order-cancelled-label">Order Cancelled</span>
-            }
-          </div>
         </div>
       }
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>ROMANCE OF EUROPE</h3>
+        <p>Where European romance and Greek beauty unite</p>
+        © 2024 Romance of Europe. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Message -->
+  @if (toastMessage) {
+    <div class="toast-message">
+      {{ toastMessage }}
     </div>
   }
 </div> 

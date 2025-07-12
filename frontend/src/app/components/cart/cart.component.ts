@@ -6,11 +6,14 @@ import { FormsModule } from '@angular/forms';
 import { environment } from '../../environment';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AuthService } from '../../auth/auth.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MatProgressSpinnerModule],
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss']
 })
@@ -20,6 +23,9 @@ export class CartComponent implements OnInit {
   subtotal = 0;
   environment = environment;
   shippingFee = 0;
+  toastMessage: string = '';
+  user$: Observable<any>;
+  cartCount$: Observable<number>;
 
   addressForm: FormGroup;
   paymentMethod = 'Cash on delivery';
@@ -28,8 +34,12 @@ export class CartComponent implements OnInit {
   constructor(
     private cartService: CartService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private auth: AuthService
   ) {
+    this.user$ = this.auth.user$;
+    this.cartCount$ = this.cartService.cartCount$;
+    
     this.addressForm = this.fb.group({
       shippingAddress: ['', Validators.required],
       shippingCity: ['', Validators.required],
@@ -70,6 +80,15 @@ export class CartComponent implements OnInit {
     return this.subtotal + this.shippingFee;
   }
 
+  logout() {
+    this.auth.logout();
+  }
+
+  showToast(message: string) {
+    this.toastMessage = message;
+    setTimeout(() => this.toastMessage = '', 2500);
+  }
+
   checkout() {
     if (this.addressForm.invalid) return;
     const productIds = this.cartItems.map(item => item.productId);
@@ -97,10 +116,11 @@ export class CartComponent implements OnInit {
       .then(() => {
         this.cartService.cartItems$.next([]);
         this.cartService.cartCount$.next(0);
+        this.showToast('Order placed successfully!');
         this.router.navigate(['/orders/latest']);
       })
       .catch(() => {
-        // Handle error silently or show a toast message
+        this.showToast('Failed to place order. Please try again.');
       });
   }
 
