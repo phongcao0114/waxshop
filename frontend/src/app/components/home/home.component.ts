@@ -3,10 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { environment } from '../../environment';
 import { AuthService } from '../../auth/auth.service';
 import { Router } from '@angular/router';
 import { CartService } from '../cart/cart.service';
+import { Observable } from 'rxjs';
 
 interface Category {
   id: number;
@@ -26,7 +28,7 @@ interface Product {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatProgressSpinnerModule],
+  imports: [CommonModule, FormsModule, MatProgressSpinnerModule, RouterLink, RouterLinkActive],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
@@ -37,13 +39,18 @@ export class HomeComponent implements OnInit {
   error = '';
   environment = environment;
   toastMessage: string = '';
+  user$: Observable<any>;
+  cartCount$: Observable<number>;
 
   constructor(
     private http: HttpClient,
     private auth: AuthService,
     private router: Router,
     private cartService: CartService
-  ) {}
+  ) {
+    this.user$ = this.auth.user$;
+    this.cartCount$ = this.cartService.cartCount$;
+  }
 
   ngOnInit() {
     this.fetchProducts();
@@ -113,5 +120,9 @@ export class HomeComponent implements OnInit {
   showToast(message: string) {
     this.toastMessage = message;
     setTimeout(() => this.toastMessage = '', 2500);
+  }
+
+  logout() {
+    this.auth.logout();
   }
 } 
