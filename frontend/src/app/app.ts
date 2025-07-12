@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { FooterComponent } from './components/footer/footer.component';
 import { HealthComponent } from './components/health/health.component';
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
@@ -23,8 +23,6 @@ import { ErrorNotificationComponent } from './shared/error-notification.componen
   standalone: true,
   imports: [
     RouterOutlet,
-    RouterLink,
-    RouterLinkActive,
     FooterComponent,
     MatToolbarModule,
     MatIconModule,

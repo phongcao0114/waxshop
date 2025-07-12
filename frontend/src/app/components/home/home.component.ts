@@ -125,4 +125,14 @@ export class HomeComponent implements OnInit {
   logout() {
     this.auth.logout();
   }
+  
+  scrollToLogin() {
+    const loginSection = document.getElementById('login');
+    if (loginSection) {
+      loginSection.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    }
+  }
 } 

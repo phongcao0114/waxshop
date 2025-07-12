@@ -256,6 +256,38 @@ h1, h2, h3, h4 {
   z-index: -1;
 }
 
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.loading-container p {
+  color: #cccccc;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+}
+
+.error-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.error-container p {
+  color: #ff6b6b;
+  font-size: 1.1rem;
+  background: rgba(255, 107, 107, 0.1);
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
 .gallery .gallery-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -650,6 +682,30 @@ h1, h2, h3, h4 {
 
 .footer .footer-bottom p {
   color: #888888;
+}
+
+.toast-message {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
+  color: #ffffff;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+  z-index: 10000;
+  animation: slideInUp 0.3s ease;
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes fadeInUp {
