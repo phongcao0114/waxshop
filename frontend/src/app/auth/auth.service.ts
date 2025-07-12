@@ -64,7 +64,7 @@ export class AuthService {
   logout() {
     console.log('AuthService: Logging out user');
     this.clearAuthData();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/']);
   }
 
   clearAuthData() {
