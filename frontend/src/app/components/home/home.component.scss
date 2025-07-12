@@ -808,5 +808,26 @@ h1, h2, h3, h4 {
   font-size: 1em;
 }
 
+.contact .contact-content .contact-form .form-group input.ng-invalid.ng-touched {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+}
+
+.contact .contact-content .contact-form .submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.error-message {
+  color: #ff6b6b;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  background: rgba(255, 107, 107, 0.1);
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
 
 /*# sourceMappingURL=parisian-style.scss.map */
