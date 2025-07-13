@@ -80,9 +80,13 @@ export class LoginComponent {
       if (res) {
         const returnUrl = this.route.snapshot.queryParams['returnUrl'];
         if (res.user.role === 'ADMIN') {
-          this.router.navigate([returnUrl || '/admin/dashboard']);
+          this.router.navigate([returnUrl || '/admin/dashboard']).then(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
         } else {
-          this.router.navigate([returnUrl || '/']);
+          this.router.navigate([returnUrl || '/']).then(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
         }
       }
     });
