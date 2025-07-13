@@ -3,6 +3,13 @@
     <div class="nav-brand">
       <h1>Romance of Europe</h1>
     </div>
+    
+    @if (user$ | async; as user) {
+      <div class="welcome-message">
+        Welcome <span class="user-name">{{ user.name }}</span>
+      </div>
+    }
+    
     <ul class="nav-menu">
       @if (user$ | async; as user) {
         @if (user.role === 'ADMIN') {

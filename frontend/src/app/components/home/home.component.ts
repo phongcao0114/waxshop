@@ -193,10 +193,14 @@ export class HomeComponent implements OnInit {
         this.isLoggedIn = true;
         // Navigate based on role
         if (res.user.role === 'ADMIN') {
-          this.router.navigate(['/admin/dashboard']);
+          this.router.navigate(['/admin/dashboard']).then(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
         } else {
-          // Stay on home page
-          this.router.navigate(['/']);
+          // Stay on home page and scroll to top
+          this.router.navigate(['/']).then(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
         }
       }
     });
