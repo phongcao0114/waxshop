@@ -40,8 +40,8 @@
             <img [src]="getImageUrl(product)" alt="{{ product.name }}" class="product-image" />
           </div>
           <div class="table-cell">{{ product.name }}</div>
-          <div class="table-cell">{{ getCategoryNameForProduct(product) }}</div>
-          <div class="table-cell">${{ product.price }}</div>
+          <div class="table-cell">{{ product.category?.name || 'N/A' }}</div>
+          <div class="table-cell">€{{ product.price | number:'1.2-2' }}</div>
           <div class="table-cell">{{ product.stock }}</div>
           <div class="table-cell actions">
             <button class="edit-btn" (click)="openEditModal(product)">
