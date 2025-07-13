@@ -59,6 +59,9 @@ export class HomeComponent implements OnInit {
   // UI state for toggle
   showRegister = false;
 
+  // Track login state for hiding login/register section
+  isLoggedIn = false;
+
   constructor(
     private http: HttpClient,
     private auth: AuthService,
@@ -86,6 +89,10 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.fetchProducts();
+    // Keep isLoggedIn in sync with authentication state
+    this.user$.subscribe(user => {
+      this.isLoggedIn = !!user;
+    });
   }
 
   fetchProducts() {
@@ -180,6 +187,8 @@ export class HomeComponent implements OnInit {
         this.showToast('Login successful!');
         this.loginForm.reset();
         
+        // Set isLoggedIn to true after successful login
+        this.isLoggedIn = true;
         // Navigate based on role
         if (res.user.role === 'ADMIN') {
           this.router.navigate(['/admin/dashboard']);

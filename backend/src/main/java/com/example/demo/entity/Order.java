@@ -27,6 +27,16 @@ public class Order {
     
     @Column(columnDefinition = "TEXT")
     private String shippingAddress;
+    @Column(length = 100)
+    private String shippingCity;
+    @Column(length = 20)
+    private String shippingPostalCode;
+    @Column(length = 100)
+    private String shippingCountry;
+    @Column(length = 20)
+    private String phoneNumber;
+    @Column(length = 50)
+    private String paymentMethod;
     
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     @JsonManagedReference

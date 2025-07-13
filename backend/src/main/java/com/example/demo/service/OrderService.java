@@ -59,6 +59,11 @@ public class OrderService {
         order.setUser(user);
         order.setStatus("PENDING");
         order.setShippingAddress(request.getShippingAddress());
+        order.setShippingCity(request.getShippingCity());
+        order.setShippingPostalCode(request.getShippingPostalCode());
+        order.setShippingCountry(request.getShippingCountry());
+        order.setPhoneNumber(request.getPhoneNumber());
+        order.setPaymentMethod(request.getPaymentMethod());
         order.setTotalAmount(request.getTotalAmount());
         // 7. Save the order to generate its ID
         order = orderRepository.save(order);
@@ -108,6 +113,11 @@ public class OrderService {
             dto.setUserEmail(order.getUser().getEmail());
             dto.setStatus(order.getStatus());
             dto.setShippingAddress(order.getShippingAddress());
+            dto.setShippingCity(order.getShippingCity());
+            dto.setShippingPostalCode(order.getShippingPostalCode());
+            dto.setShippingCountry(order.getShippingCountry());
+            dto.setPhoneNumber(order.getPhoneNumber());
+            dto.setPaymentMethod(order.getPaymentMethod());
             dto.setTotalAmount(order.getTotalAmount());
             dto.setItems(order.getItems().stream().map(item -> {
                 OrderItemDTO itemDTO = new OrderItemDTO();
@@ -131,6 +141,11 @@ public class OrderService {
             dto.setUserEmail(order.getUser().getEmail());
             dto.setStatus(order.getStatus());
             dto.setShippingAddress(order.getShippingAddress());
+            dto.setShippingCity(order.getShippingCity());
+            dto.setShippingPostalCode(order.getShippingPostalCode());
+            dto.setShippingCountry(order.getShippingCountry());
+            dto.setPhoneNumber(order.getPhoneNumber());
+            dto.setPaymentMethod(order.getPaymentMethod());
             dto.setTotalAmount(order.getTotalAmount());
             dto.setItems(order.getItems().stream().map(item -> {
                 OrderItemDTO itemDTO = new OrderItemDTO();
@@ -153,6 +168,11 @@ public class OrderService {
             dto.setUserEmail(order.getUser().getEmail());
             dto.setStatus(order.getStatus());
             dto.setShippingAddress(order.getShippingAddress());
+            dto.setShippingCity(order.getShippingCity());
+            dto.setShippingPostalCode(order.getShippingPostalCode());
+            dto.setShippingCountry(order.getShippingCountry());
+            dto.setPhoneNumber(order.getPhoneNumber());
+            dto.setPaymentMethod(order.getPaymentMethod());
             dto.setTotalAmount(order.getTotalAmount());
             dto.setItems(order.getItems().stream().map(item -> {
                 OrderItemDTO itemDTO = new OrderItemDTO();
@@ -176,6 +196,11 @@ public class OrderService {
             dto.setUserEmail(order.getUser().getEmail());
             dto.setStatus(order.getStatus());
             dto.setShippingAddress(order.getShippingAddress());
+            dto.setShippingCity(order.getShippingCity());
+            dto.setShippingPostalCode(order.getShippingPostalCode());
+            dto.setShippingCountry(order.getShippingCountry());
+            dto.setPhoneNumber(order.getPhoneNumber());
+            dto.setPaymentMethod(order.getPaymentMethod());
             dto.setTotalAmount(order.getTotalAmount());
             dto.setItems(order.getItems().stream().map(item -> {
                 OrderItemDTO itemDTO = new OrderItemDTO();

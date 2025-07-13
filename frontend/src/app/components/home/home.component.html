@@ -76,7 +76,7 @@
         </section>
 
         <!-- Login/Register Section -->
-        <section class="contact" id="login">
+        <section class="contact" id="login" [class.hidden]="isLoggedIn">
             <div class="contact-content">
                 <div [class.hidden]="showRegister">
                     <h2 class="section-title">Login</h2>
