@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { FooterComponent } from './components/footer/footer.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
 import { HealthComponent } from './components/health/health.component';
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
@@ -24,6 +25,7 @@ import { ErrorNotificationComponent } from './shared/error-notification.componen
   imports: [
     RouterOutlet,
     FooterComponent,
+    NavbarComponent,
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,

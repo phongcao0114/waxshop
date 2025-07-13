@@ -16,7 +16,7 @@
         }
         <li><a href="#" (click)="logout(); $event.preventDefault()">Logout</a></li>
       } @else {
-        <li><a routerLink="/login" routerLinkActive="active">Login</a></li>
+        <li><a href="#login" (click)="handleLoginClick($event)">Login</a></li>
       }
     </ul>
   </nav>

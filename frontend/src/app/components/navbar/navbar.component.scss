@@ -81,39 +81,35 @@ h1, h2, h3, h4 {
   font-weight: 400;
   transition: all 0.3s ease;
   position: relative;
-  padding: 0.5rem 1rem;
-  border-radius: 25px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .header .nav .nav-menu a::after {
   content: "";
   position: absolute;
-  bottom: -5px;
   left: 0;
-  width: 0;
+  right: 0;
+  bottom: -4px;
   height: 2px;
   background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
+  width: 0;
   transition: width 0.3s ease;
 }
 
-.header .nav .nav-menu a:hover {
-  color: #ff6b35;
-  background: rgba(255, 107, 53, 0.1);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(255, 107, 53, 0.2);
-}
-
-.header .nav .nav-menu a:hover::after {
-  width: 100%;
-}
-
+.header .nav .nav-menu a:hover,
 .header .nav .nav-menu a.active {
-  background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
-  color: #ffffff;
-  box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+  color: #ff6b35;
+  background: none;
+  box-shadow: none;
+}
+
+.header .nav .nav-menu a:hover::after,
+.header .nav .nav-menu a.active::after {
+  width: 100%;
 }
 
 .cart-count {
