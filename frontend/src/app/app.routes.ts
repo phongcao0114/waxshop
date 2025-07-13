@@ -3,7 +3,7 @@ import {HealthComponent} from './components/health/health.component';
 import {UnauthorizedComponent} from './components/unauthorized/unauthorized.component';
 import {NotFoundComponent} from './components/not-found/not-found.component';
 import {LoginComponent} from './auth/login.component';
-import {RegisterComponent} from './auth/register.component';
+// import {RegisterComponent} from './auth/register.component';
 import {HomeComponent} from './components/home';
 import { CartComponent } from './components/cart/cart.component';
 import { OrderDetailsComponent } from './components/order/order-details.component';
@@ -14,7 +14,7 @@ export const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'cart', component: CartComponent, canActivate: [AuthGuard]},
   {path: 'login', component: LoginComponent},
-  {path: 'register', component: RegisterComponent},
+  {path: 'register', component: LoginComponent},
   {path: 'health', component: HealthComponent},
   {path: 'unauthorized', component: UnauthorizedComponent},
   {path: 'orders/latest', component: OrderDetailsComponent, canActivate: [AuthGuard]},

@@ -49,6 +49,16 @@ export class HomeComponent implements OnInit {
   loginLoading = false;
   loginError: string | null = null;
 
+  // Register form properties
+  registerForm: any;
+  registerLoading = false;
+  registerError: string | null = null;
+  registerSuccess: string | null = null;
+  phonePattern = /^0[0-9]{9,10}$/;
+
+  // UI state for toggle
+  showRegister = false;
+
   constructor(
     private http: HttpClient,
     private auth: AuthService,
@@ -64,6 +74,14 @@ export class HomeComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
+    // Initialize register form
+    this.registerForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      phone: ['', [Validators.required, Validators.pattern(this.phonePattern)]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]]
+    }, { validators: this.passwordsMatch });
   }
 
   ngOnInit() {
@@ -196,6 +214,62 @@ export class HomeComponent implements OnInit {
         behavior: 'smooth', 
         block: 'start' 
       });
+    }
+  }
+
+  // Register form methods
+  submitRegister() {
+    if (this.registerForm.invalid) return;
+    this.registerLoading = true;
+    this.registerError = null;
+    this.registerSuccess = null;
+    const { name, phone, email, password } = this.registerForm.value;
+    this.auth.register(email!, password!, name!, phone!).subscribe({
+      next: () => {
+        this.registerLoading = false;
+        this.registerSuccess = 'Registration successful! Please login.';
+        setTimeout(() => {
+          this.switchToLogin();
+          this.registerForm.reset();
+        }, 1500);
+      },
+      error: (err: any) => {
+        this.registerLoading = false;
+        console.log('Register error:', err);
+        let apiMsg = '';
+        if (typeof err.error?.details?.error === 'string') {
+          apiMsg = err.error.details.error;
+        } else if (typeof err.error?.error === 'string') {
+          apiMsg = err.error.error;
+        } else if (err.error?.message) {
+          apiMsg = err.error.message;
+        } else if (err.error?.error) {
+          apiMsg = JSON.stringify(err.error.error);
+        }
+        this.registerError = apiMsg ? `Registration failed: ${apiMsg}` : 'Registration failed';
+      }
+    });
+  }
+
+  passwordsMatch(group: any) {
+    return group.get('password')?.value === group.get('confirmPassword')?.value ? null : { notMatching: true };
+  }
+
+  switchToRegister() {
+    this.showRegister = true;
+    this.loginError = null;
+    this.registerError = null;
+    this.registerSuccess = null;
+  }
+  switchToLogin() {
+    this.showRegister = false;
+    this.registerError = null;
+    this.registerSuccess = null;
+  }
+
+  onRegisterInput() {
+    if (this.registerError) {
+      this.registerError = null;
     }
   }
 } 

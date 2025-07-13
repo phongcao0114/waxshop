@@ -75,53 +75,117 @@
             </div>
         </section>
 
-        <!-- Login Section -->
+        <!-- Login/Register Section -->
         <section class="contact" id="login">
             <div class="contact-content">
-                <h2 class="section-title">Login</h2>
-                <form [formGroup]="loginForm" (ngSubmit)="submitLogin()" class="contact-form">
-                    <div class="form-group">
-                        <input 
-                            type="email" 
-                            placeholder="Email" 
-                            formControlName="email"
-                            (input)="onLoginInput()"
-                            required>
-                        @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
-                            <div class="error-message">
-                                Valid email is required
-                            </div>
-                        }
-                    </div>
-                    <div class="form-group">
-                        <input 
-                            type="password" 
-                            placeholder="Password" 
-                            formControlName="password"
-                            (input)="onLoginInput()"
-                            required>
-                        @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-                            <div class="error-message">
-                                Password (min 6 chars) is required
-                            </div>
-                        }
-                    </div>
-                    <button 
-                        type="submit" 
-                        [disabled]="loginLoading || loginForm.invalid" 
-                        class="submit-btn">
-                        @if (loginLoading) {
-                            Loading...
-                        } @else {
-                            Login
-                        }
-                    </button>
-                    @if (loginError) {
-                        <div class="error-message">
-                            {{ loginError }}
+                <div [class.hidden]="showRegister">
+                    <h2 class="section-title">Login</h2>
+                    <form [formGroup]="loginForm" (ngSubmit)="submitLogin()" class="contact-form">
+                        <div class="form-group">
+                            <input 
+                                type="email" 
+                                placeholder="Email" 
+                                formControlName="email"
+                                (input)="onLoginInput()"
+                                required>
+                            @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+                                <div class="error-message">
+                                    Valid email is required
+                                </div>
+                            }
                         </div>
-                    }
-                </form>
+                        <div class="form-group">
+                            <input 
+                                type="password" 
+                                placeholder="Password" 
+                                formControlName="password"
+                                (input)="onLoginInput()"
+                                required>
+                            @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+                                <div class="error-message">
+                                    Password (min 6 chars) is required
+                                </div>
+                            }
+                        </div>
+                        <button 
+                            type="submit" 
+                            [disabled]="loginLoading || loginForm.invalid" 
+                            class="submit-btn">
+                            @if (loginLoading) {
+                                Loading...
+                            } @else {
+                                Login
+                            }
+                        </button>
+                        @if (loginError) {
+                            <div class="error-message">
+                                {{ loginError }}
+                            </div>
+                        }
+                    </form>
+                    <p class="auth-link-text">Don't have an account? <a href="#" class="auth-link" (click)="switchToRegister(); $event.preventDefault()">Register</a></p>
+                </div>
+                <div [class.hidden]="!showRegister">
+                    <h2 class="section-title">Register</h2>
+                    <form [formGroup]="registerForm" (ngSubmit)="submitRegister()" class="contact-form">
+                        <div class="form-group">
+                            <input type="text" placeholder="Name" formControlName="name" />
+                            @if (registerForm.get('name')?.invalid && registerForm.get('name')?.touched) {
+                                <div class="error-message">
+                                    Name is required and must be at least 2 characters
+                                </div>
+                            }
+                        </div>
+                        <div class="form-group">
+                            <input type="text" placeholder="Phone" formControlName="phone" />
+                            @if (registerForm.get('phone')?.invalid && registerForm.get('phone')?.touched) {
+                                <div class="error-message">
+                                    @if (registerForm.get('phone')?.errors?.['required']) {
+                                        Phone number is required
+                                    }
+                                    @if (registerForm.get('phone')?.errors?.['pattern']) {
+                                        Phone number must start with 0 and be 10–11 digits
+                                    }
+                                </div>
+                            }
+                        </div>
+                        <div class="form-group">
+                            <input type="email" placeholder="Email" formControlName="email" />
+                            @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+                                <div class="error-message">
+                                    Valid email is required
+                                </div>
+                            }
+                        </div>
+                        <div class="form-group">
+                            <input type="password" placeholder="Password" formControlName="password" />
+                            @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+                                <div class="error-message">
+                                    Password (min 6 chars) is required
+                                </div>
+                            }
+                        </div>
+                        <div class="form-group">
+                            <input type="password" placeholder="Confirm Password" formControlName="confirmPassword" />
+                            @if (registerForm.hasError('notMatching') && registerForm.get('confirmPassword')?.touched) {
+                                <div class="error-message">
+                                    Passwords do not match
+                                </div>
+                            }
+                        </div>
+                        <button type="submit" [disabled]="registerLoading || registerForm.invalid" class="submit-btn">Register</button>
+                        @if (registerLoading) {
+                            <div class="spinner">Loading...</div>
+                        }
+                        @if (registerError) {
+                            <div class="error-message">{{ registerError }}</div>
+                        }
+                        @if (registerSuccess) {
+                            <div class="success-message">{{ registerSuccess }}</div>
+                        }
+                    </form>
+                    <p class="auth-link-text">Already have an account? <a href="#" class="auth-link" (click)="switchToLogin(); $event.preventDefault()">Login</a></p>
+                </div>
             </div>
         </section>
 

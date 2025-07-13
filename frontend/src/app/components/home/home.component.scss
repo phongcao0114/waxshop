@@ -829,5 +829,26 @@ h1, h2, h3, h4 {
   border: 1px solid rgba(255, 107, 107, 0.3);
 }
 
+.hidden {
+  display: none !important;
+}
+
+.auth-link-text {
+  color: #ff6b35;
+  margin-top: 1rem;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.auth-link {
+  color: #ff6b35;
+  text-decoration: underline;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+.auth-link:hover {
+  color: #e55a2b;
+}
+
 
 /*# sourceMappingURL=parisian-style.scss.map */
