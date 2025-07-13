@@ -98,11 +98,9 @@
                 @if (userForm.get('email')?.errors?.['email']) {
                   Please enter a valid email address
                 }
-              </div>
-            }
-            @if (!editingUser && userForm.hasError('emailExists') && userForm.get('email')?.touched) {
-              <div class="error-message">
-                This email address is already registered
+                @if (userForm.get('email')?.errors?.['emailExists']) {
+                  This email address is already registered
+                }
               </div>
             }
           </div>

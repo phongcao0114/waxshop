@@ -3,11 +3,15 @@ import { CommonModule } from '@angular/common';
 import { OrderService } from './order.service';
 import { Order } from './order.model';
 import { environment } from '../../environment';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AuthService } from '../../auth/auth.service';
+import { CartService } from '../cart/cart.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-order-details',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatProgressSpinnerModule],
   templateUrl: './order-details.component.html',
   styleUrls: ['./order-details.component.scss']
 })
@@ -19,16 +23,35 @@ export class OrderDetailsComponent implements OnInit {
   cancelingOrderId: number | null = null;
   markingDeliveredOrderId: number | null = null;
   environment = environment;
+  toastMessage: string = '';
+  user$: Observable<any>;
+  cartCount$: Observable<number>;
 
   // Status filter (no SHIPPED)
   statusOptions: string[] = ['ALL', 'PENDING', 'PROCESSING', 'SHIPPING', 'DELIVERED', 'CANCELLED'];
   selectedStatus: string = 'ALL';
   statusCounts: { [key: string]: number } = {};
 
-  constructor(private orderService: OrderService) {}
+  constructor(
+    private orderService: OrderService,
+    private auth: AuthService,
+    private cartService: CartService
+  ) {
+    this.user$ = this.auth.user$;
+    this.cartCount$ = this.cartService.cartCount$;
+  }
 
   ngOnInit() {
     this.fetchOrders();
+  }
+
+  logout() {
+    this.auth.logout();
+  }
+
+  showToast(message: string) {
+    this.toastMessage = message;
+    setTimeout(() => this.toastMessage = '', 2500);
   }
 
   fetchOrders() {
@@ -98,11 +121,13 @@ export class OrderDetailsComponent implements OnInit {
     this.orderService.cancelOrder(order.id).subscribe({
       next: () => {
         this.cancelingOrderId = null;
+        this.showToast('Order cancelled successfully!');
         this.fetchOrders();
       },
       error: () => {
         this.error = 'Failed to cancel order.';
         this.cancelingOrderId = null;
+        this.showToast('Failed to cancel order. Please try again.');
       }
     });
   }
@@ -118,11 +143,13 @@ export class OrderDetailsComponent implements OnInit {
     this.orderService.markOrderDelivered(order.id).subscribe({
       next: () => {
         this.markingDeliveredOrderId = null;
+        this.showToast('Order marked as delivered!');
         this.fetchOrders();
       },
       error: () => {
         this.error = 'Failed to mark order as delivered.';
         this.markingDeliveredOrderId = null;
+        this.showToast('Failed to mark order as delivered. Please try again.');
       }
     });
   }

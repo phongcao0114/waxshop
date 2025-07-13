@@ -42,7 +42,7 @@
           <div class="table-cell">{{ order.userEmail }}</div>
           <div class="table-cell">{{ order.date | date:'short' }}</div>
           <div class="table-cell">{{ calculateTotalItems(order) }} items</div>
-          <div class="table-cell">${{ order.totalAmount }}</div>
+          <div class="table-cell">€{{ order.totalAmount | number:'1.2-2' }}</div>
           <div class="table-cell">
             <span class="status-badge" [class]="getStatusClass(order.status)">
               {{ order.status }}
@@ -142,8 +142,8 @@
                 <div class="item-row">
                   <div class="item-cell">{{ item.productName }}</div>
                   <div class="item-cell">{{ item.quantity }}</div>
-                  <div class="item-cell">${{ item.price }}</div>
-                  <div class="item-cell">${{ item.price * item.quantity }}</div>
+                  <div class="item-cell">€{{ item.price | number:'1.2-2' }}</div>
+                  <div class="item-cell">€{{ (item.price * item.quantity) | number:'1.2-2' }}</div>
                 </div>
               }
             </div>
@@ -154,15 +154,15 @@
             <div class="summary-grid">
               <div class="summary-item">
                 <span class="summary-label">Subtotal:</span>
-                <span class="summary-value">${{ selectedOrder.totalAmount - selectedOrder.shippingFee }}</span>
+                <span class="summary-value">€{{ (selectedOrder.totalAmount - selectedOrder.shippingFee) | number:'1.2-2' }}</span>
               </div>
               <div class="summary-item">
                 <span class="summary-label">Shipping Fee:</span>
-                <span class="summary-value">${{ selectedOrder.shippingFee }}</span>
+                <span class="summary-value">€{{ selectedOrder.shippingFee | number:'1.2-2' }}</span>
               </div>
               <div class="summary-item total">
                 <span class="summary-label">Total:</span>
-                <span class="summary-value">${{ selectedOrder.totalAmount }}</span>
+                <span class="summary-value">€{{ selectedOrder.totalAmount | number:'1.2-2' }}</span>
               </div>
             </div>
           </div>

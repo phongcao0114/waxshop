@@ -87,15 +87,13 @@ INSERT IGNORE INTO users (
 );
 
 -- Insert category only if not exists
-INSERT IGNORE INTO category (name) VALUES ('Waxworks');
+INSERT IGNORE INTO category (name) VALUES ('Statue');
 
 -- Get the waxworks category ID
-SET @waxworks_id = (SELECT id FROM category WHERE name = 'Waxworks' LIMIT 1);
+SET @statue_id = (SELECT id FROM category WHERE name = 'Statue' LIMIT 1);
 
 -- Insert products only if not exists
 INSERT IGNORE INTO product (description, image_url, name, price, stock, category_id) VALUES
-    ('Bright, juicy, and playfully sweet. This fragrance glows like a peach grove at sunset—summer bottled in wax.', '/uploads/1751899312816_1peach.png', 'HOPO Golden Orchard - Peach', 19.99, 46, @waxworks_id),
-    ('Elegant and poetic, this candle wraps your space in the timeless allure of blooming roses. A floral breeze to warm the heart.', '/uploads/1751899360976_1rose.png', 'HOPO Bloom Whisper - Rose', 18.99, 47, @waxworks_id),
-    ('Tranquil and earthy, this scent offers a mindful escape. Green tea''s herbal calm brings peace to your senses.', '/uploads/1751899923070_1tea.png', 'HOPO Zen Leaves - Green Tea', 20.99, 47, @waxworks_id),
-    ('Velvety and indulgent, this fragrance swirls with rich chocolatey warmth—like a hug made of cocoa.', '/uploads/1751900001121_1choco.png', 'HOPO Cocoa Ember - Chocolate', 18.99, 39, @waxworks_id),
-    ('Fresh and breezy, this candle pulls you toward the sea with a splash of marine air and coastal serenity.', '/uploads/1751900314290_1ocean.png', 'HOPO Ocean Drift - Ocean', 19.99, 46, @waxworks_id); 
+    ('Romantic elegance, where the grace of Athens meets the heart of Paris. A muse for every lover of beauty.', '/uploads/1.png', 'Venus in Paris', 249.99, 50, @statue_id),
+    ('A tribute to the timeless allure of Greek goddesses, sculpted with the soul of Paris. Marble curves, eternal romance.', '/uploads/2.png', 'Aphrodites Grace', 299.99, 50, @statue_id),
+    ('Inspired by the marble masterpieces of ancient Europe, reimagined for the city of love. Where myth meets midnight', '/uploads/3.png', 'Muse of the Seine', 19.99, 50, @statue_id); 

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AdminService } from '../admin/admin.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { AdminStatsRefreshService } from './admin-stats-refresh.service';
 
 @Component({
   selector: 'app-admin-stats-cards',
@@ -13,9 +14,9 @@ import { takeUntil } from 'rxjs/operators';
         <p class="stat-number">{{ stats.totalOrders }}</p>
         <div class="stat-icon">📦</div>
       </div>
-      <div class="stat-card clickable" (click)="navigateToOrders('PENDING')">
-        <h3>Pending Orders</h3>
-        <p class="stat-number">{{ stats.pendingOrders }}</p>
+      <div class="stat-card clickable" (click)="navigateToOrders('ACTIVE')">
+        <h3>Active Orders</h3>
+        <p class="stat-number">{{ stats.activeOrders }}</p>
         <div class="stat-icon">⏳</div>
       </div>
       <div class="stat-card clickable" (click)="navigateToCategories()">
@@ -27,6 +28,11 @@ import { takeUntil } from 'rxjs/operators';
         <h3>Products</h3>
         <p class="stat-number">{{ stats.totalProducts }}</p>
         <div class="stat-icon">🛍️</div>
+      </div>
+      <div class="stat-card clickable" (click)="navigateToUsers()">
+        <h3>Users</h3>
+        <p class="stat-number">{{ stats.totalUsers }}</p>
+        <div class="stat-icon">👥</div>
       </div>
     </div>
   `,
@@ -87,16 +93,17 @@ export class AdminStatsCardsComponent implements OnInit, OnDestroy {
 
   stats = {
     totalOrders: 0,
-    pendingOrders: 0,
+    activeOrders: 0,
     totalCategories: 0,
-    totalProducts: 0
+    totalProducts: 0,
+    totalUsers: 0
   };
 
-  constructor(private adminService: AdminService, private router: Router) {}
+  constructor(private adminService: AdminService, private router: Router, private statsRefresh: AdminStatsRefreshService) {}
 
   ngOnInit() {
     this.loadStats();
-    
+    this.statsRefresh.refresh$.subscribe(() => this.loadStats());
     // Auto-refresh every 5 minutes
     this.refreshInterval = setInterval(() => {
       this.loadStats();
@@ -112,30 +119,34 @@ export class AdminStatsCardsComponent implements OnInit, OnDestroy {
   }
 
   loadStats() {
-    // Only load if not already loaded or if data is stale
-    if (this.shouldRefreshStats()) {
-      this.adminService.getAllOrders().pipe(
-        takeUntil(this.destroy$)
-      ).subscribe(orders => {
-        this.stats.totalOrders = orders.length;
-        this.stats.pendingOrders = orders.filter(order => order.status === 'PENDING' || order.status === 'PROCESSING').length;
-        this.lastUpdate = Date.now();
-      });
+    this.adminService.getAllOrders().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(orders => {
+      this.stats.totalOrders = orders.length;
+      this.stats.activeOrders = orders.filter(order => order.status === 'PENDING' || order.status === 'PROCESSING' || order.status === 'SHIPPING').length;
+      this.lastUpdate = Date.now();
+    });
 
-      this.adminService.getCategories().pipe(
-        takeUntil(this.destroy$)
-      ).subscribe(categories => {
-        this.stats.totalCategories = categories.length;
-        this.lastUpdate = Date.now();
-      });
+    this.adminService.getCategories().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(categories => {
+      this.stats.totalCategories = categories.length;
+      this.lastUpdate = Date.now();
+    });
 
-      this.adminService.getProducts().pipe(
-        takeUntil(this.destroy$)
-      ).subscribe(products => {
-        this.stats.totalProducts = products.length;
-        this.lastUpdate = Date.now();
-      });
-    }
+    this.adminService.getProducts().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(products => {
+      this.stats.totalProducts = products.length;
+      this.lastUpdate = Date.now();
+    });
+
+    this.adminService.getAllUsers().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(users => {
+      this.stats.totalUsers = users.length;
+      this.lastUpdate = Date.now();
+    });
   }
 
   private shouldRefreshStats(): boolean {
@@ -157,5 +168,9 @@ export class AdminStatsCardsComponent implements OnInit, OnDestroy {
 
   navigateToProducts() {
     this.router.navigate(['/admin/products']);
+  }
+
+  navigateToUsers() {
+    this.router.navigate(['/admin/users']);
   }
 } 

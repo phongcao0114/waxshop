@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
 export class AdminDashboardComponent implements OnInit {
   stats = {
     totalOrders: 0,
-    pendingOrders: 0,
+    activeOrders: 0,
     totalCategories: 0,
     totalProducts: 0
   };
@@ -55,8 +55,8 @@ export class AdminDashboardComponent implements OnInit {
     this.adminService.getAllOrders().subscribe({
       next: (orders) => {
         this.stats.totalOrders = orders.length;
-        this.stats.pendingOrders = orders.filter(order => 
-          order.status === 'PENDING' || order.status === 'PROCESSING'
+        this.stats.activeOrders = orders.filter(order => 
+          order.status === 'PENDING' || order.status === 'PROCESSING' || order.status === 'SHIPPING'
         ).length;
       },
       error: (err) => {

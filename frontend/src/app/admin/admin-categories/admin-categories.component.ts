@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AdminService, Category } from '../admin.service';
+import { AdminStatsRefreshService } from '../../shared/admin-stats-refresh.service';
 
 @Component({
   selector: 'app-admin-categories',
@@ -21,7 +22,8 @@ export class AdminCategoriesComponent implements OnInit {
 
   constructor(
     private adminService: AdminService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private statsRefresh: AdminStatsRefreshService
   ) {
     this.categoryForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]]
@@ -83,6 +85,7 @@ export class AdminCategoriesComponent implements OnInit {
             }
             this.showToast('Category updated successfully');
             this.closeModal();
+            this.statsRefresh.triggerRefresh();
           },
           error: (err) => {
             this.showToast('Failed to update category');
@@ -96,6 +99,7 @@ export class AdminCategoriesComponent implements OnInit {
             this.categories.push(newCategory);
             this.showToast('Category created successfully');
             this.closeModal();
+            this.statsRefresh.triggerRefresh();
           },
           error: (err) => {
             this.showToast('Failed to create category');
@@ -112,6 +116,7 @@ export class AdminCategoriesComponent implements OnInit {
         next: () => {
           this.categories = this.categories.filter(c => c.id !== category.id);
           this.showToast('Category deleted successfully');
+          this.statsRefresh.triggerRefresh();
         },
         error: (err) => {
           this.showToast('Failed to delete category');

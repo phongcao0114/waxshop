@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AdminService, Product, Category } from '../admin.service';
 import { environment } from '../../environment';
+import { AdminStatsRefreshService } from '../../shared/admin-stats-refresh.service';
 
 @Component({
   selector: 'app-admin-products',
@@ -25,7 +26,8 @@ export class AdminProductsComponent implements OnInit {
 
   constructor(
     private adminService: AdminService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private statsRefresh: AdminStatsRefreshService
   ) {
     this.productForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
@@ -143,6 +145,7 @@ export class AdminProductsComponent implements OnInit {
             }
             this.showToast('Product updated successfully');
             this.closeModal();
+            this.statsRefresh.triggerRefresh();
           },
           error: (err) => {
             this.showToast('Failed to update product');
@@ -161,6 +164,7 @@ export class AdminProductsComponent implements OnInit {
             this.products.push(productWithCategoryId);
             this.showToast('Product created successfully');
             this.closeModal();
+            this.statsRefresh.triggerRefresh();
           },
           error: (err) => {
             this.showToast('Failed to create product');
@@ -177,6 +181,7 @@ export class AdminProductsComponent implements OnInit {
         next: (res: any) => {
           this.products = this.products.filter(p => p.id !== product.id);
           this.showToast(res && res.message ? res.message : 'Product deleted successfully');
+          this.statsRefresh.triggerRefresh();
         },
         error: (err) => {
           let msg = 'Failed to delete product';

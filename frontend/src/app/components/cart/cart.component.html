@@ -1,105 +1,133 @@
-@if (!loading) {
-  <div class="cart-page">
-    <h2 class="cart-title">Review your bag</h2>
-    <div class="cart-subtitle">Free delivery and free returns.</div>
-    @if (cartItems.length === 0) {
-      <div class="cart-empty">Your cart is empty.</div>
-    }
-    @if (cartItems.length > 0) {
-      <div class="cart-content-vertical">
-        <div class="cart-items-container">
-          <div class="cart-items">
-            @for (item of cartItems; track item.productId) {
-              <div class="cart-item">
-                <div class="cart-accent-bar">
-                  <div class="cart-item-qty">
-                    <button (click)="changeQty(item, item.quantity-1)" [disabled]="item.quantity <= 1">-</button>
-                    <span class="cart-item-qty-value">{{item.quantity}}</span>
-                    <button (click)="changeQty(item, item.quantity+1)">+</button>
+<div class="parisian-container">
+
+  <!-- Cart Section -->
+  <section class="cart-section">
+    <div class="cart-content">
+      <h2 class="section-title">Your Shopping Cart</h2>
+      <p class="cart-subtitle">Free delivery and free returns.</p>
+      
+      @if (loading) {
+        <div class="loading-container">
+          <mat-spinner></mat-spinner>
+          <p>Loading cart...</p>
+        </div>
+      } @else if (cartItems.length === 0) {
+        <div class="cart-empty">
+          <div class="empty-icon">🛒</div>
+          <h3>Your cart is empty</h3>
+          <p>Start shopping to add items to your cart</p>
+        </div>
+      } @else {
+        <div class="cart-layout">
+          <div class="cart-items-container">
+            <h3 class="cart-items-title">Cart Items</h3>
+            <div class="cart-items">
+              @for (item of cartItems; track item.productId) {
+                <div class="cart-item">
+                  <div class="cart-item-image">
+                    <img [src]="getImageUrl(item)" alt="{{item.productName}}" />
+                  </div>
+                  <div class="cart-item-details">
+                    <h4 class="cart-item-name">{{item.productName}}</h4>
+                    <p class="cart-item-price">€{{item.productPrice | number:'1.2-2'}}</p>
+                    <div class="cart-item-actions">
+                      <div class="quantity-controls">
+                        <button class="qty-btn" (click)="changeQty(item, item.quantity-1)" [disabled]="item.quantity <= 1">−</button>
+                        <span class="qty-value">{{item.quantity}}</span>
+                        <button class="qty-btn" (click)="changeQty(item, item.quantity+1)">+</button>
+                      </div>
+                      <button class="remove-btn" (click)="removeItem(item)">Remove</button>
+                    </div>
                   </div>
                 </div>
-                <img [src]="getImageUrl(item)" alt="{{item.productName}}" class="cart-item-img" />
-                <div class="cart-item-info">
-                  <div class="cart-item-name">{{item.productName}}</div>
-                  <div class="cart-item-price">${{item.productPrice | number:'1.2-2'}}</div>
-                  <button class="cart-item-remove" (click)="removeItem(item)">Remove</button>
+              }
+            </div>
+          </div>
+
+          <div class="checkout-container">
+            <form class="checkout-form" [formGroup]="addressForm" (ngSubmit)="checkout()">
+              <h3 class="checkout-title">Shipping Information</h3>
+              <div class="form-fields">
+                <div class="form-group">
+                  <label for="shippingAddress">Street Address *</label>
+                  <input id="shippingAddress" type="text" formControlName="shippingAddress" required />
+                  @if (addressForm.get('shippingAddress')?.invalid && addressForm.get('shippingAddress')?.touched) {
+                    <div class="error-message">Street address is required</div>
+                  }
+                </div>
+                <div class="form-group">
+                  <label for="shippingCity">City *</label>
+                  <input id="shippingCity" type="text" formControlName="shippingCity" required />
+                  @if (addressForm.get('shippingCity')?.invalid && addressForm.get('shippingCity')?.touched) {
+                    <div class="error-message">City is required</div>
+                  }
+                </div>
+                <div class="form-group">
+                  <label for="shippingPostalCode">Postal Code *</label>
+                  <input id="shippingPostalCode" type="text" formControlName="shippingPostalCode" required />
+                  @if (addressForm.get('shippingPostalCode')?.invalid && addressForm.get('shippingPostalCode')?.touched) {
+                    <div class="error-message">Postal code is required</div>
+                  }
+                </div>
+                <div class="form-group">
+                  <label for="shippingCountry">Country *</label>
+                  <input id="shippingCountry" type="text" formControlName="shippingCountry" required />
+                  @if (addressForm.get('shippingCountry')?.invalid && addressForm.get('shippingCountry')?.touched) {
+                    <div class="error-message">Country is required</div>
+                  }
+                </div>
+                <div class="form-group">
+                  <label for="phoneNumber">Phone Number *</label>
+                  <input id="phoneNumber" type="text" formControlName="phoneNumber" required />
+                  @if (addressForm.get('phoneNumber')?.invalid && addressForm.get('phoneNumber')?.touched) {
+                    <div class="error-message">
+                      @if (addressForm.get('phoneNumber')?.errors?.['required']) {Phone number is required}
+                      @if (addressForm.get('phoneNumber')?.errors?.['pattern']) {Phone number must start with 0 and be 10–11 digits}
+                    </div>
+                  }
+                </div>
+                <div class="form-group">
+                  <label>Payment Method</label>
+                  <input type="text" [value]="paymentMethod" disabled />
                 </div>
               </div>
-            }
+
+              <div class="order-summary">
+                <h4 class="summary-title">Order Summary</h4>
+                <div class="summary-row">
+                  <span>Subtotal</span>
+                  <span>€{{subtotal | number:'1.2-2'}}</span>
+                </div>
+                <div class="summary-row">
+                  <span>Shipping</span>
+                  <span>Free</span>
+                </div>
+                <div class="summary-row">
+                  <span>Estimated tax</span>
+                  <span>€ –</span>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-row total-row">
+                  <span>Total</span>
+                  <span class="total-value">€{{totalAmount | number:'1.2-2'}}</span>
+                </div>
+                <button class="checkout-btn" type="submit" [disabled]="addressForm.invalid">
+                  CHECK OUT
+                </button>
+              </div>
+            </form>
           </div>
         </div>
-        <form class="cart-checkout-form" [formGroup]="addressForm" (ngSubmit)="checkout()">
-          <div class="checkout-merged">
-            <h3 class="address-title">Shipping Address</h3>
-            <div class="address-fields">
-              <div class="address-field">
-                <label for="shippingAddress">Street Address *</label>
-                <input id="shippingAddress" type="text" formControlName="shippingAddress" required />
-                @if (addressForm.get('shippingAddress')?.invalid && addressForm.get('shippingAddress')?.touched) {
-                  <div class="error-message">Street address is required</div>
-                }
-              </div>
-              <div class="address-field">
-                <label for="shippingCity">City *</label>
-                <input id="shippingCity" type="text" formControlName="shippingCity" required />
-                @if (addressForm.get('shippingCity')?.invalid && addressForm.get('shippingCity')?.touched) {
-                  <div class="error-message">City is required</div>
-                }
-              </div>
-              <div class="address-field">
-                <label for="shippingPostalCode">Postal Code *</label>
-                <input id="shippingPostalCode" type="text" formControlName="shippingPostalCode" required />
-                @if (addressForm.get('shippingPostalCode')?.invalid && addressForm.get('shippingPostalCode')?.touched) {
-                  <div class="error-message">Postal code is required</div>
-                }
-              </div>
-              <div class="address-field">
-                <label for="shippingCountry">Country *</label>
-                <input id="shippingCountry" type="text" formControlName="shippingCountry" required />
-                @if (addressForm.get('shippingCountry')?.invalid && addressForm.get('shippingCountry')?.touched) {
-                  <div class="error-message">Country is required</div>
-                }
-              </div>
-              <div class="address-field">
-                <label for="phoneNumber">Phone Number *</label>
-                <input id="phoneNumber" type="text" formControlName="phoneNumber" required />
-                @if (addressForm.get('phoneNumber')?.invalid && addressForm.get('phoneNumber')?.touched) {
-                  <div class="error-message">
-                    @if (addressForm.get('phoneNumber')?.errors?.['required']) {Phone number is required}
-                    @if (addressForm.get('phoneNumber')?.errors?.['pattern']) {Phone number must start with 0 and be 10–11 digits}
-                  </div>
-                }
-              </div>
-              <div class="address-field">
-                <label>Payment Method</label>
-                <input type="text" [value]="paymentMethod" disabled />
-              </div>
-            </div>
-            <div class="cart-summary">
-              <div class="summary-row subtotal-row">
-                <span>Subtotal</span>
-                <span>${{subtotal | number:'1.2-2'}}</span>
-              </div>
-              <div class="summary-row shipping-row">
-                <span>Shipping</span>
-                <span>Free</span>
-              </div>
-              <div class="summary-row tax-row">
-                <span>Estimated tax</span>
-                <span>$ –</span>
-              </div>
-              <div class="summary-divider"></div>
-              <div class="summary-row total-row">
-                <span>Total</span>
-                <span class="total-value">${{totalAmount | number:'1.2-2'}}</span>
-              </div>
-              <button class="checkout-btn" type="submit" [disabled]="addressForm.invalid">CHECK OUT</button>
-            </div>
-          </div>
-        </form>
-      </div>
-    }
-  </div>
-} @else {
-  <div class="cart-loading">Loading...</div>
-} 
+      }
+    </div>
+  </section>
+
+
+
+  <!-- Toast Message -->
+  @if (toastMessage) {
+    <div class="toast-message">
+      {{ toastMessage }}
+    </div>
+  }
+</div> 

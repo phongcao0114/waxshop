@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AdminService, UserProfile } from '../admin.service';
+import { AdminStatsRefreshService } from '../../shared/admin-stats-refresh.service';
 
 @Component({
   selector: 'app-admin-users',
@@ -22,7 +23,11 @@ export class AdminUsersComponent implements OnInit {
 
   phonePattern = /^0[0-9]{9,10}$/;
 
-  constructor(private adminService: AdminService, private fb: FormBuilder) {
+  constructor(
+    private adminService: AdminService, 
+    private fb: FormBuilder,
+    private statsRefresh: AdminStatsRefreshService
+  ) {
     this.userForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
@@ -37,9 +42,36 @@ export class AdminUsersComponent implements OnInit {
     this.loadUsers();
     
     // Listen to email changes to trigger validation
-    this.userForm.get('email')?.valueChanges.subscribe(() => {
-      this.userForm.updateValueAndValidity();
+    this.userForm.get('email')?.valueChanges.subscribe((email) => {
+      if (email && !this.editingUser) {
+        const emailExists = this.checkEmailExists(email);
+        const emailControl = this.userForm.get('email');
+        if (emailExists) {
+          emailControl?.setErrors({ ...emailControl.errors, emailExists: true });
+        } else {
+          // Remove emailExists error but keep other validations
+          const errors = emailControl?.errors;
+          if (errors) {
+            delete errors['emailExists'];
+            emailControl?.setErrors(Object.keys(errors).length > 0 ? errors : null);
+          }
+        }
+      }
     });
+  }
+
+  // Check if email already exists in the current users list
+  checkEmailExists(email: string): boolean {
+    if (!email || this.editingUser) return false;
+    return this.users.some(user => user.email.toLowerCase() === email.toLowerCase());
+  }
+
+  // Custom validator for email existence
+  emailExistsValidator() {
+    return (control: any) => {
+      if (!control.value) return null;
+      return this.checkEmailExists(control.value) ? { emailExists: true } : null;
+    };
   }
 
   loadUsers() {
@@ -114,6 +146,7 @@ export class AdminUsersComponent implements OnInit {
             }
             this.showToast('User updated successfully');
             this.closeModal();
+            this.statsRefresh.triggerRefresh();
             this.saving = false;
           },
           error: (err) => {
@@ -138,12 +171,15 @@ export class AdminUsersComponent implements OnInit {
             this.loadUsers();
             this.showToast('User created successfully');
             this.closeModal();
+            this.statsRefresh.triggerRefresh();
             this.saving = false;
           },
           error: (err) => {
-            this.showToast('Failed to create user');
-            console.error('Error creating user:', err);
             this.saving = false;
+            // Handle specific error messages from backend
+            const errorMessage = err.error?.error || 'Failed to create user';
+            this.showToast(errorMessage);
+            console.error('Error creating user:', err);
           }
         });
       }
@@ -156,6 +192,7 @@ export class AdminUsersComponent implements OnInit {
         next: () => {
           this.users = this.users.filter(u => u.id !== user.id);
           this.showToast('User deleted successfully');
+          this.statsRefresh.triggerRefresh();
         },
         error: (err) => {
           this.showToast('Failed to delete user');
@@ -178,14 +215,14 @@ export class AdminUsersComponent implements OnInit {
     this.userForm.reset();
   }
 
-  getRoleClass(role: string): string {
-    return role === 'ADMIN' ? 'role-admin' : 'role-user';
-  }
-
   passwordMatchValidator(group: FormGroup) {
     const password = group.get('password')?.value;
     const confirmPassword = group.get('confirmPassword')?.value;
     return password === confirmPassword ? null : { notMatching: true };
+  }
+
+  getRoleClass(role: string): string {
+    return role === 'ADMIN' ? 'role-admin' : 'role-user';
   }
 
   showToast(message: string) {

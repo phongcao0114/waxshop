@@ -147,7 +147,7 @@ export class AdminService {
     return this.http.delete<void>(`${this.apiUrl}/admin/users/${id}`, { headers: this.getAuthHeaders() });
   }
 
-  registerAdmin(userData: { email: string; password: string; name: string }): Observable<User> {
+  registerAdmin(userData: { email: string; password: string; name: string; phone: string; role: string }): Observable<User> {
     return this.http.post<User>(`${this.apiUrl}/auth/admin/register`, userData, { headers: this.getAuthHeaders() });
   }
 } 

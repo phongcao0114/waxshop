@@ -1,10 +1,11 @@
 import {Component} from '@angular/core';
-import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormBuilder, ReactiveFormsModule, Validators, FormGroup} from '@angular/forms';
 import {AuthService} from './auth.service';
 import {Router, RouterLink, ActivatedRoute} from '@angular/router';
 import {ErrorHandlerService} from './error-handler.service';
 import {catchError, finalize} from 'rxjs/operators';
-import {of} from 'rxjs';
+import {of, Observable} from 'rxjs';
+import {LoginResponse} from './auth.service';
 
 @Component({
   selector: 'app-login',
@@ -19,8 +20,20 @@ import {of} from 'rxjs';
 export class LoginComponent {
   loading = false;
   error: string | null = null;
+  success: string | null = null;
 
-  form;
+  // Login form
+  form: FormGroup;
+
+  // Register form
+  registerForm: FormGroup;
+  registerLoading = false;
+  registerError: string | null = null;
+  registerSuccess: string | null = null;
+  phonePattern = /^0[0-9]{9,10}$/;
+
+  // UI state
+  showRegister = false;
 
   constructor(
     private fb: FormBuilder, 
@@ -29,42 +42,89 @@ export class LoginComponent {
     private route: ActivatedRoute,
     private errorHandler: ErrorHandlerService
   ) {
-    // Move form initialization here to ensure fb is initialized
+    // Login form
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
+    // Register form
+    this.registerForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      phone: ['', [Validators.required, Validators.pattern(this.phonePattern)]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]]
+    }, {validators: this.passwordsMatch});
   }
 
+  // Password match validator for register form
+  passwordsMatch(group: FormGroup) {
+    return group.get('password')?.value === group.get('confirmPassword')?.value ? null : {notMatching: true};
+  }
+
+  // Login submit
   submit() {
     if (this.form.invalid) return;
-    
     this.loading = true;
     this.error = null;
-    
     const {email, password} = this.form.value;
-    
     this.auth.login(email!, password!).pipe(
-      catchError(error => {
-        // Let the error handler service handle the error display
+      catchError((error: any) => {
         this.errorHandler.handleAuthError(error);
         return of(null);
       }),
       finalize(() => {
         this.loading = false;
       })
-    ).subscribe(res => {
+    ).subscribe((res: LoginResponse | null) => {
       if (res) {
-        // Get return URL from query params, or default based on role
         const returnUrl = this.route.snapshot.queryParams['returnUrl'];
-        
         if (res.user.role === 'ADMIN') {
-          this.router.navigate([returnUrl || '/admin/dashboard']);
+          this.router.navigate([returnUrl || '/admin/dashboard']).then(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
         } else {
-          this.router.navigate([returnUrl || '/']);
+          this.router.navigate([returnUrl || '/']).then(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
         }
       }
     });
+  }
+
+  // Register submit
+  submitRegister() {
+    if (this.registerForm.invalid) return;
+    this.registerLoading = true;
+    this.registerError = null;
+    this.registerSuccess = null;
+    const {name, phone, email, password} = this.registerForm.value;
+    this.auth.register(email!, password!, name!, phone!).subscribe({
+      next: () => {
+        this.registerLoading = false;
+        this.registerSuccess = 'Registration successful! Please login.';
+        setTimeout(() => {
+          this.showRegister = false;
+          this.registerForm.reset();
+        }, 1500);
+      },
+      error: (err: any) => {
+        this.registerLoading = false;
+        this.registerError = err.error?.error || 'Registration failed';
+      }
+    });
+  }
+
+  // UI switch
+  switchToRegister() {
+    this.showRegister = true;
+    this.error = null;
+    this.success = null;
+  }
+  switchToLogin() {
+    this.showRegister = false;
+    this.registerError = null;
+    this.registerSuccess = null;
   }
 
   // Clear error when user starts typing
