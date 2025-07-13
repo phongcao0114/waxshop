@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AdminService, UserProfile } from '../admin.service';
+import { AdminStatsRefreshService } from '../../shared/admin-stats-refresh.service';
 
 @Component({
   selector: 'app-admin-users',
@@ -22,7 +23,11 @@ export class AdminUsersComponent implements OnInit {
 
   phonePattern = /^0[0-9]{9,10}$/;
 
-  constructor(private adminService: AdminService, private fb: FormBuilder) {
+  constructor(
+    private adminService: AdminService, 
+    private fb: FormBuilder,
+    private statsRefresh: AdminStatsRefreshService
+  ) {
     this.userForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
@@ -114,6 +119,7 @@ export class AdminUsersComponent implements OnInit {
             }
             this.showToast('User updated successfully');
             this.closeModal();
+            this.statsRefresh.triggerRefresh();
             this.saving = false;
           },
           error: (err) => {
@@ -138,6 +144,7 @@ export class AdminUsersComponent implements OnInit {
             this.loadUsers();
             this.showToast('User created successfully');
             this.closeModal();
+            this.statsRefresh.triggerRefresh();
             this.saving = false;
           },
           error: (err) => {
@@ -156,6 +163,7 @@ export class AdminUsersComponent implements OnInit {
         next: () => {
           this.users = this.users.filter(u => u.id !== user.id);
           this.showToast('User deleted successfully');
+          this.statsRefresh.triggerRefresh();
         },
         error: (err) => {
           this.showToast('Failed to delete user');

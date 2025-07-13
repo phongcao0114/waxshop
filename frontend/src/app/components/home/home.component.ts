@@ -138,7 +138,9 @@ export class HomeComponent implements OnInit {
   addToCart(product: Product) {
     const token = this.auth.getToken();
     if (!token) {
-      this.router.navigate(['/login']);
+      // Scroll to login section instead of navigating to separate login page
+      this.scrollToLogin();
+      this.showToast('Please login to add items to cart');
       return;
     }
     this.http.post(

@@ -29,6 +29,11 @@ import { AdminStatsRefreshService } from './admin-stats-refresh.service';
         <p class="stat-number">{{ stats.totalProducts }}</p>
         <div class="stat-icon">🛍️</div>
       </div>
+      <div class="stat-card clickable" (click)="navigateToUsers()">
+        <h3>Users</h3>
+        <p class="stat-number">{{ stats.totalUsers }}</p>
+        <div class="stat-icon">👥</div>
+      </div>
     </div>
   `,
   styles: [`
@@ -90,7 +95,8 @@ export class AdminStatsCardsComponent implements OnInit, OnDestroy {
     totalOrders: 0,
     activeOrders: 0,
     totalCategories: 0,
-    totalProducts: 0
+    totalProducts: 0,
+    totalUsers: 0
   };
 
   constructor(private adminService: AdminService, private router: Router, private statsRefresh: AdminStatsRefreshService) {}
@@ -134,6 +140,13 @@ export class AdminStatsCardsComponent implements OnInit, OnDestroy {
       this.stats.totalProducts = products.length;
       this.lastUpdate = Date.now();
     });
+
+    this.adminService.getAllUsers().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(users => {
+      this.stats.totalUsers = users.length;
+      this.lastUpdate = Date.now();
+    });
   }
 
   private shouldRefreshStats(): boolean {
@@ -155,5 +168,9 @@ export class AdminStatsCardsComponent implements OnInit, OnDestroy {
 
   navigateToProducts() {
     this.router.navigate(['/admin/products']);
+  }
+
+  navigateToUsers() {
+    this.router.navigate(['/admin/users']);
   }
 } 
