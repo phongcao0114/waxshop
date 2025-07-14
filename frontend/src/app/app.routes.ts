@@ -18,6 +18,7 @@ export const routes: Routes = [
   {path: 'health', component: HealthComponent},
   {path: 'unauthorized', component: UnauthorizedComponent},
   {path: 'orders/latest', component: OrderDetailsComponent, canActivate: [AuthGuard]},
+  {path: 'profile', loadComponent: () => import('./user/user-profile/user-profile.component').then(m => m.UserProfileComponent), canActivate: [AuthGuard]},
   {
     path: 'admin',
     canActivate: [AuthGuard],

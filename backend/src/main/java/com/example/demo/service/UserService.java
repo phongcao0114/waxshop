@@ -2,9 +2,11 @@ package com.example.demo.service;
 
 import com.example.demo.dto.UserProfileDTO;
 import com.example.demo.dto.UserProfileUpdateDTO;
+import com.example.demo.dto.PasswordChangeDTO;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +16,8 @@ import java.util.stream.Collectors;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public UserProfileDTO getUserProfile(String email) {
         User user = userRepository.findByEmail(email).orElseThrow();
@@ -32,6 +36,28 @@ public class UserService {
         user.setPhone(updateDTO.getPhone());
         userRepository.save(user);
         return getUserProfile(email);
+    }
+
+    public void changePassword(String email, PasswordChangeDTO passwordChangeDTO) {
+        User user = userRepository.findByEmail(email).orElseThrow();
+        
+        // Verify current password
+        if (!passwordEncoder.matches(passwordChangeDTO.getCurrentPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Current password is incorrect");
+        }
+        
+        // Validate new password
+        if (passwordChangeDTO.getNewPassword() == null || passwordChangeDTO.getNewPassword().trim().isEmpty()) {
+            throw new IllegalArgumentException("New password cannot be empty");
+        }
+        
+        if (passwordChangeDTO.getNewPassword().length() < 6) {
+            throw new IllegalArgumentException("New password must be at least 6 characters long");
+        }
+        
+        // Update password
+        user.setPassword(passwordEncoder.encode(passwordChangeDTO.getNewPassword()));
+        userRepository.save(user);
     }
 
     public List<UserProfileDTO> getAllUsers() {

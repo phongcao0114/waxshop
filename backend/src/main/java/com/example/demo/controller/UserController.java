@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.UserProfileDTO;
 import com.example.demo.dto.UserProfileUpdateDTO;
+import com.example.demo.dto.PasswordChangeDTO;
 import com.example.demo.service.UserService;
 import com.example.demo.util.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users/profile")
@@ -29,5 +32,12 @@ public class UserController {
         String email = AuthUtil.getEmailFromAuth(authentication);
         UserProfileDTO updated = userService.updateUserProfile(email, updateDTO);
         return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<?> changePassword(@RequestBody PasswordChangeDTO passwordChangeDTO, Authentication authentication) {
+        String email = AuthUtil.getEmailFromAuth(authentication);
+        userService.changePassword(email, passwordChangeDTO);
+        return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
     }
 }

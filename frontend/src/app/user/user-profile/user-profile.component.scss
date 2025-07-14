@@ -1,0 +1,301 @@
+// Import the main theme styles
+@import '../../components/home/home.component.scss';
+
+// Profile-specific styles
+.profile-section {
+  margin-top: 6rem;
+  padding: 0 5%;
+}
+
+.profile-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.profile-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 3rem;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.profile-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+}
+
+.profile-card .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.profile-card .section-header .section-title {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.profile-card .contact-form {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.profile-card .contact-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.profile-card .contact-form .form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #ff6b35;
+  font-size: 0.95rem;
+}
+
+.profile-card .contact-form .form-group input {
+  width: 100%;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.profile-card .contact-form .form-group input::placeholder {
+  color: #cccccc;
+}
+
+.profile-card .contact-form .form-group input:focus {
+  outline: none;
+  border-color: #ff6b35;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.profile-card .contact-form .form-group input.ng-invalid.ng-touched {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+}
+
+.profile-card .contact-form .form-group input.readonly-field {
+  background: rgba(255, 255, 255, 0.05);
+  color: #cccccc;
+  cursor: not-allowed;
+}
+
+.profile-card .contact-form .form-group small {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #cccccc;
+}
+
+.profile-card .contact-form .error-message {
+  color: #ff6b6b;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  background: rgba(255, 107, 107, 0.1);
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.profile-card .contact-form .error-message.password-error {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  background: rgba(255, 107, 107, 0.15);
+  border-color: rgba(255, 107, 107, 0.5);
+}
+
+.profile-card .contact-form .submit-btn {
+  background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
+  color: #ffffff;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.profile-card .contact-form .submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+}
+
+.profile-card .contact-form .submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.profile-card .contact-form .submit-btn .btn-spinner {
+  margin-right: 0.5rem;
+}
+
+.profile-card .secondary-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.profile-card .secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.profile-card .password-form {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  color: #ffffff;
+}
+
+.loading-container p {
+  margin-top: 1rem;
+  color: #cccccc;
+  font-size: 1.1rem;
+}
+
+.toast-message {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
+  color: #ffffff;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+  z-index: 999999 !important; /* Ultra high z-index to ensure it's always on top */
+  animation: slideInUp 0.3s ease;
+  max-width: 400px;
+  /* Additional safeguards */
+  pointer-events: auto;
+  isolation: isolate;
+  /* Ensure it's above Material Design overlays and other high z-index elements */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.toast-message.error-toast {
+  background: linear-gradient(135deg, #ff6b6b 0%, #e55a5a 100%);
+  box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+}
+
+/* Ensure toast is always visible even with Material Design overlays */
+.toast-message::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  background: inherit;
+  border-radius: inherit;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .profile-section {
+    padding: 0 1rem;
+    margin-top: 4rem;
+  }
+
+  .profile-content {
+    gap: 2rem;
+  }
+
+  .profile-card {
+    padding: 2rem;
+  }
+
+  .profile-card .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .profile-card .section-header .section-title {
+    font-size: 1.5rem;
+  }
+
+  .profile-card .contact-form .submit-btn {
+    width: 100%;
+  }
+
+  .profile-card .secondary-btn {
+    width: 100%;
+  }
+
+  .toast-message {
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+    max-width: none;
+  }
+}
+
+// Animation for profile cards
+.profile-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Loading spinner styles
+mat-spinner {
+  ::ng-deep circle {
+    stroke: #ff6b35 !important;
+  }
+}
+
+.btn-spinner {
+  ::ng-deep circle {
+    stroke: white !important;
+  }
+} 

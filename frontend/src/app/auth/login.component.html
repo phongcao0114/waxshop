@@ -7,20 +7,28 @@
         <div class="auth-field">
           <label for="email">Email *</label>
           <input id="email" formControlName="email" type="email" (input)="onInput()" />
-          <div class="error-message" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
-            Valid email is required
-          </div>
+          @if (form.get('email')?.invalid && form.get('email')?.touched) {
+            <div class="error-message">
+              Valid email is required
+            </div>
+          }
         </div>
         <div class="auth-field">
           <label for="password">Password *</label>
           <input id="password" formControlName="password" type="password" (input)="onInput()" />
-          <div class="error-message" *ngIf="form.get('password')?.invalid && form.get('password')?.touched">
-            Password (min 6 chars) is required
-          </div>
+          @if (form.get('password')?.invalid && form.get('password')?.touched) {
+            <div class="error-message">
+              Password (min 6 chars) is required
+            </div>
+          }
         </div>
         <button type="submit" [disabled]="loading || form.invalid" class="auth-btn">Login</button>
-        <div class="spinner" *ngIf="loading">Loading...</div>
-        <div class="toast error" *ngIf="error">{{ error }}</div>
+        @if (loading) {
+          <div class="spinner">Loading...</div>
+        }
+        @if (error) {
+          <div class="toast error">{{ error }}</div>
+        }
       </form>
       <p class="auth-link-text">Don't have an account? <a href="#" class="auth-link" (click)="switchToRegister(); $event.preventDefault()">Register</a></p>
     </div>
@@ -32,43 +40,63 @@
         <div class="auth-field">
           <label for="name">Name *</label>
           <input id="name" formControlName="name" type="text" />
-          <div class="error-message" *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">
-            Name is required and must be at least 2 characters
-          </div>
+          @if (registerForm.get('name')?.invalid && registerForm.get('name')?.touched) {
+            <div class="error-message">
+              Name is required and must be at least 2 characters
+            </div>
+          }
         </div>
         <div class="auth-field">
           <label for="phone">Phone *</label>
           <input id="phone" formControlName="phone" type="text" />
-          <div class="error-message" *ngIf="registerForm.get('phone')?.invalid && registerForm.get('phone')?.touched">
-            <span *ngIf="registerForm.get('phone')?.errors?.['required']">Phone number is required</span>
-            <span *ngIf="registerForm.get('phone')?.errors?.['pattern']">Phone number must start with 0 and be 10–11 digits</span>
-          </div>
+          @if (registerForm.get('phone')?.invalid && registerForm.get('phone')?.touched) {
+            <div class="error-message">
+              @if (registerForm.get('phone')?.errors?.['required']) {
+                <span>Phone number is required</span>
+              }
+              @if (registerForm.get('phone')?.errors?.['pattern']) {
+                <span>Phone number must start with 0 and be 10–11 digits</span>
+              }
+            </div>
+          }
         </div>
         <div class="auth-field">
           <label for="register-email">Email *</label>
           <input id="register-email" formControlName="email" type="email" />
-          <div class="error-message" *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
-            Valid email is required
-          </div>
+          @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+            <div class="error-message">
+              Valid email is required
+            </div>
+          }
         </div>
         <div class="auth-field">
           <label for="register-password">Password *</label>
           <input id="register-password" formControlName="password" type="password" />
-          <div class="error-message" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
-            Password (min 6 chars) is required
-          </div>
+          @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+            <div class="error-message">
+              Password (min 6 chars) is required
+            </div>
+          }
         </div>
         <div class="auth-field">
           <label for="confirmPassword">Confirm Password *</label>
           <input id="confirmPassword" formControlName="confirmPassword" type="password" />
-          <div class="error-message" *ngIf="registerForm.hasError('notMatching') && registerForm.get('confirmPassword')?.touched">
-            Passwords do not match
-          </div>
+          @if (registerForm.hasError('notMatching') && registerForm.get('confirmPassword')?.touched) {
+            <div class="error-message">
+              Passwords do not match
+            </div>
+          }
         </div>
         <button type="submit" [disabled]="registerLoading || registerForm.invalid" class="auth-btn">Register</button>
-        <div class="spinner" *ngIf="registerLoading">Loading...</div>
-        <div class="toast error" *ngIf="registerError">{{ registerError }}</div>
-        <div class="toast success" *ngIf="registerSuccess">{{ registerSuccess }}</div>
+        @if (registerLoading) {
+          <div class="spinner">Loading...</div>
+        }
+        @if (registerError) {
+          <div class="toast error">{{ registerError }}</div>
+        }
+        @if (registerSuccess) {
+          <div class="toast success">{{ registerSuccess }}</div>
+        }
       </form>
       <p class="auth-link-text">Already have an account? <a href="#" class="auth-link" (click)="switchToLogin(); $event.preventDefault()">Login</a></p>
     </div>
