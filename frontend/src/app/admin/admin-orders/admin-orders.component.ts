@@ -231,4 +231,21 @@ export class AdminOrdersComponent implements OnInit {
       this.updateOrderStatus(this.selectedOrder, target.value);
     }
   }
+
+  // Add these methods for order summary calculations
+  getSelectedOrderSubtotal(): number {
+    if (!this.selectedOrder || !this.selectedOrder.items) return 0;
+    return this.selectedOrder.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  }
+
+  getSelectedOrderShipping(): string {
+    if (!this.selectedOrder) return '€0.00';
+    if (!this.selectedOrder.shippingFee || this.selectedOrder.shippingFee === 0) return 'Free';
+    return `€${this.selectedOrder.shippingFee.toFixed(2)}`;
+  }
+
+  getSelectedOrderTotal(): number {
+    if (!this.selectedOrder) return 0;
+    return this.getSelectedOrderSubtotal() + (this.selectedOrder.shippingFee || 0);
+  }
 } 

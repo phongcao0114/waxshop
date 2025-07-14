@@ -154,15 +154,15 @@
             <div class="summary-grid">
               <div class="summary-item">
                 <span class="summary-label">Subtotal:</span>
-                <span class="summary-value">€{{ (selectedOrder.totalAmount - selectedOrder.shippingFee) | number:'1.2-2' }}</span>
+                <span class="summary-value">€{{ getSelectedOrderSubtotal() | number:'1.2-2' }}</span>
               </div>
               <div class="summary-item">
                 <span class="summary-label">Shipping Fee:</span>
-                <span class="summary-value">€{{ selectedOrder.shippingFee | number:'1.2-2' }}</span>
+                <span class="summary-value">{{ getSelectedOrderShipping() }}</span>
               </div>
               <div class="summary-item total">
                 <span class="summary-label">Total:</span>
-                <span class="summary-value">€{{ selectedOrder.totalAmount | number:'1.2-2' }}</span>
+                <span class="summary-value">€{{ getSelectedOrderTotal() | number:'1.2-2' }}</span>
               </div>
             </div>
           </div>
