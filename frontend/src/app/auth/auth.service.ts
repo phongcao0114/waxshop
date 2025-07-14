@@ -28,12 +28,13 @@ export class AuthService {
   private refreshSubject = new BehaviorSubject<boolean>(false);
   private errorSubject = new BehaviorSubject<AuthError | null>(null);
   
-  // Retry configuration
+  // Centralized refresh state management
+  private isRefreshing = false;
+  private refreshTokenSubject = new BehaviorSubject<string | null>(null);
+  private failedRefreshAttempts = 0;
   private readonly MAX_REFRESH_RETRIES = 3;
-  private readonly REFRESH_RETRY_DELAY = 2000; // 2 seconds
-  private refreshRetryCount = 0;
-  private lastRefreshAttempt = 0;
   private readonly REFRESH_COOLDOWN = 5000; // 5 seconds between refresh attempts
+  private lastRefreshAttempt = 0;
   
   user$ = this.userSubject.asObservable();
   refresh$ = this.refreshSubject.asObservable();
@@ -49,6 +50,7 @@ export class AuthService {
       tap(res => {
         this.handleSuccessfulAuth(res);
         this.clearError();
+        this.resetRefreshState();
       }),
       catchError(this.handleAuthError.bind(this))
     );
@@ -64,6 +66,7 @@ export class AuthService {
   logout() {
     console.log('AuthService: Logging out user');
     this.clearAuthData();
+    this.resetRefreshState();
     this.router.navigate(['/']);
   }
 
@@ -73,7 +76,13 @@ export class AuthService {
     localStorage.removeItem('user');
     this.userSubject.next(null);
     this.refreshSubject.next(false);
-    this.refreshRetryCount = 0;
+  }
+
+  private resetRefreshState() {
+    this.isRefreshing = false;
+    this.refreshTokenSubject.next(null);
+    this.failedRefreshAttempts = 0;
+    this.lastRefreshAttempt = 0;
   }
 
   getToken(): string | null {
@@ -113,40 +122,68 @@ export class AuthService {
     return isAuth;
   }
 
+  // Centralized refresh method that prevents concurrent attempts
   refreshToken(refreshToken: string): Observable<string> {
     const now = Date.now();
     
     // Check cooldown period
     if (now - this.lastRefreshAttempt < this.REFRESH_COOLDOWN) {
+      console.log('AuthService: Refresh attempt too soon, skipping');
       return throwError(() => new Error('Refresh attempt too soon'));
     }
     
+    // Check if refresh token is expired
+    if (this.isRefreshTokenExpired()) {
+      console.error('AuthService: Refresh token is expired, logging out');
+      this.logout();
+      return throwError(() => new Error('Refresh token expired'));
+    }
+    
+    // Check if already refreshing
+    if (this.isRefreshing) {
+      console.log('AuthService: Refresh already in progress, waiting...');
+      return this.refreshTokenSubject.pipe(
+        switchMap(token => {
+          if (token) {
+            return of(token);
+          } else {
+            return throwError(() => new Error('Refresh failed'));
+          }
+        })
+      );
+    }
+    
     // Check retry limit
-    if (this.refreshRetryCount >= this.MAX_REFRESH_RETRIES) {
-      console.error('AuthService: Max refresh retries exceeded');
+    if (this.failedRefreshAttempts >= this.MAX_REFRESH_RETRIES) {
+      console.error('AuthService: Max refresh retries exceeded, logging out');
       this.logout();
       return throwError(() => new Error('Max refresh retries exceeded'));
     }
     
+    this.isRefreshing = true;
     this.lastRefreshAttempt = now;
-    this.refreshRetryCount++;
+    this.failedRefreshAttempts++;
     this.refreshSubject.next(true);
     
-    console.log(`AuthService: Attempting token refresh (attempt ${this.refreshRetryCount}/${this.MAX_REFRESH_RETRIES})`);
+    console.log(`AuthService: Attempting token refresh (attempt ${this.failedRefreshAttempts}/${this.MAX_REFRESH_RETRIES})`);
     
     return this.http.post<LoginResponse>(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
       tap(res => {
         this.handleSuccessfulAuth(res);
-        this.refreshRetryCount = 0; // Reset retry count on success
+        this.failedRefreshAttempts = 0; // Reset retry count on success
+        this.isRefreshing = false;
+        this.refreshTokenSubject.next(res.token);
         this.refreshSubject.next(false);
         console.log('AuthService: Token refresh successful');
       }),
       map(res => res.token),
       catchError(error => {
+        this.isRefreshing = false;
+        this.refreshTokenSubject.next(null);
         this.refreshSubject.next(false);
         console.error('AuthService: Token refresh failed', error);
         
-        if (this.refreshRetryCount >= this.MAX_REFRESH_RETRIES) {
+        if (this.failedRefreshAttempts >= this.MAX_REFRESH_RETRIES) {
           console.error('AuthService: Max refresh retries reached, logging out');
           this.logout();
         }
@@ -154,6 +191,37 @@ export class AuthService {
         return throwError(() => error);
       })
     );
+  }
+
+  // Method for interceptor to check if refresh is in progress
+  isRefreshInProgress(): boolean {
+    return this.isRefreshing;
+  }
+
+  // Method for interceptor to wait for refresh completion
+  waitForRefresh(): Observable<string | null> {
+    return this.refreshTokenSubject.asObservable();
+  }
+
+  // Check if refresh token is expired
+  isRefreshTokenExpired(): boolean {
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      return true;
+    }
+    
+    try {
+      const parts = refreshToken.split('.');
+      if (parts.length !== 3) return true;
+      
+      const payload = JSON.parse(atob(parts[1]));
+      if (!payload || !payload.exp) return true;
+      
+      const now = Math.floor(Date.now() / 1000);
+      return payload.exp < now;
+    } catch {
+      return true;
+    }
   }
 
   private handleSuccessfulAuth(res: LoginResponse) {
@@ -256,13 +324,20 @@ export class AuthService {
           return of(null);
         }
 
+        // Check if refresh token is expired
+        if (this.isRefreshTokenExpired()) {
+          console.log('AuthService: Refresh token expired, logging out');
+          this.logout();
+          return of(null);
+        }
+
         const now = Math.floor(Date.now() / 1000);
         const timeUntilExpiry = decoded.exp - now;
         
         // If token expires in less than 2 minutes, refresh it
         if (timeUntilExpiry < 120 && timeUntilExpiry > 0) {
           const refreshToken = this.getRefreshToken();
-          if (refreshToken) {
+          if (refreshToken && !this.isRefreshing && !this.isRefreshTokenExpired()) {
             console.log(`AuthService: Token expires in ${timeUntilExpiry}s, refreshing...`);
             return this.refreshToken(refreshToken).pipe(
               catchError(error => {

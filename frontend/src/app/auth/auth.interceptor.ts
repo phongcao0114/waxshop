@@ -2,12 +2,7 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from './auth.service';
 import { environment } from '../environment';
-import { from, switchMap, catchError, throwError, BehaviorSubject, filter, take, Observable, of } from 'rxjs';
-
-// Global state for refresh token management
-let isRefreshing = false;
-let refreshTokenSubject = new BehaviorSubject<string | null>(null);
-let failedRequests: any[] = [];
+import { from, switchMap, catchError, throwError, filter, take, Observable, of } from 'rxjs';
 
 export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
@@ -18,10 +13,11 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
   if (token && isApiUrl) {
     // Check if token is expired before making request
     if (auth.isTokenExpired()) {
-      if (refreshToken) {
+      if (refreshToken && !auth.isRefreshTokenExpired()) {
         // Token is expired, try to refresh before making the request
-        if (isRefreshing) {
-          return refreshTokenSubject.pipe(
+        if (auth.isRefreshInProgress()) {
+          // If already refreshing, wait for the new token
+          return auth.waitForRefresh().pipe(
             filter(token => token !== null),
             take(1),
             switchMap(newToken => {
@@ -32,22 +28,15 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
             })
           );
         } else {
-          isRefreshing = true;
-          refreshTokenSubject.next(null);
-
+          // Start refresh process
           return auth.refreshToken(refreshToken).pipe(
             switchMap(newToken => {
-              isRefreshing = false;
-              refreshTokenSubject.next(newToken);
-              
               const authReq = req.clone({
                 setHeaders: { Authorization: `Bearer ${newToken}` }
               });
               return next(authReq);
             }),
             catchError(refreshErr => {
-              isRefreshing = false;
-              refreshTokenSubject.next(null);
               console.error('AuthInterceptor: Token refresh failed during request', refreshErr);
               auth.logout();
               return throwError(() => refreshErr);
@@ -55,9 +44,9 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
           );
         }
       } else {
-        console.error('AuthInterceptor: Token expired and no refresh token available');
+        console.error('AuthInterceptor: Token expired and no valid refresh token available');
         auth.logout();
-        return throwError(() => new Error('Token expired and no refresh token available'));
+        return throwError(() => new Error('Token expired and no valid refresh token available'));
       }
     }
 
@@ -68,9 +57,9 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
       catchError(err => {
         if (err.status === 401 && refreshToken) {
           // Try to refresh token on 401 only
-          if (isRefreshing) {
+          if (auth.isRefreshInProgress()) {
             // If already refreshing, wait for the new token
-            return refreshTokenSubject.pipe(
+            return auth.waitForRefresh().pipe(
               filter(token => token !== null),
               take(1),
               switchMap(newToken => {
@@ -80,29 +69,26 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
                 return next(retryReq);
               })
             );
-          } else {
+          } else if (!auth.isRefreshTokenExpired()) {
             // Start refresh process
-            isRefreshing = true;
-            refreshTokenSubject.next(null);
-
             return auth.refreshToken(refreshToken).pipe(
               switchMap(newToken => {
-                isRefreshing = false;
-                refreshTokenSubject.next(newToken);
-                
                 const retryReq = req.clone({
                   setHeaders: { Authorization: `Bearer ${newToken}` }
                 });
                 return next(retryReq);
               }),
               catchError(refreshErr => {
-                isRefreshing = false;
-                refreshTokenSubject.next(null);
                 console.error('AuthInterceptor: Token refresh failed on 401', refreshErr);
                 auth.logout();
                 return throwError(() => refreshErr);
               })
             );
+          } else {
+            // Refresh token is expired
+            console.error('AuthInterceptor: Refresh token expired on 401');
+            auth.logout();
+            return throwError(() => new Error('Refresh token expired'));
           }
         } else if (err.status === 401) {
           // 401 without refresh token: logout immediately
@@ -111,23 +97,15 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
           return throwError(() => err);
         } else if (err.status === 403) {
           // 403 might be due to expired token, try to refresh
-          if (refreshToken && !isRefreshing) {
-            isRefreshing = true;
-            refreshTokenSubject.next(null);
-
+          if (refreshToken && !auth.isRefreshInProgress() && !auth.isRefreshTokenExpired()) {
             return auth.refreshToken(refreshToken).pipe(
               switchMap(newToken => {
-                isRefreshing = false;
-                refreshTokenSubject.next(newToken);
-                
                 const retryReq = req.clone({
                   setHeaders: { Authorization: `Bearer ${newToken}` }
                 });
                 return next(retryReq);
               }),
               catchError(refreshErr => {
-                isRefreshing = false;
-                refreshTokenSubject.next(null);
                 console.error('AuthInterceptor: Token refresh failed on 403', refreshErr);
                 // Don't logout on 403 refresh failure, let component handle
                 return throwError(() => err);
