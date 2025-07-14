@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
-import {BehaviorSubject, Observable, tap, map, catchError, timer, switchMap, of, throwError} from 'rxjs';
+import {BehaviorSubject, Observable, tap, map, catchError, timer, switchMap, of, throwError, timeout} from 'rxjs';
 import { environment } from '../environment';
 
 export interface LoginResponse {
@@ -125,23 +125,24 @@ export class AuthService {
   // Centralized refresh method that prevents concurrent attempts
   refreshToken(refreshToken: string): Observable<string> {
     const now = Date.now();
+    console.log('refreshToken called', { refreshToken });
     
     // Check cooldown period
     if (now - this.lastRefreshAttempt < this.REFRESH_COOLDOWN) {
-      console.log('AuthService: Refresh attempt too soon, skipping');
+      console.log('Refresh attempt too soon');
       return throwError(() => new Error('Refresh attempt too soon'));
     }
     
     // Check if refresh token is expired
     if (this.isRefreshTokenExpired()) {
-      console.error('AuthService: Refresh token is expired, logging out');
+      console.log('Refresh token is expired');
       this.logout();
       return throwError(() => new Error('Refresh token expired'));
     }
     
     // Check if already refreshing
     if (this.isRefreshing) {
-      console.log('AuthService: Refresh already in progress, waiting...');
+      console.log('Already refreshing');
       return this.refreshTokenSubject.pipe(
         switchMap(token => {
           if (token) {
@@ -155,7 +156,7 @@ export class AuthService {
     
     // Check retry limit
     if (this.failedRefreshAttempts >= this.MAX_REFRESH_RETRIES) {
-      console.error('AuthService: Max refresh retries exceeded, logging out');
+      console.log('Max refresh retries exceeded');
       this.logout();
       return throwError(() => new Error('Max refresh retries exceeded'));
     }
@@ -165,29 +166,27 @@ export class AuthService {
     this.failedRefreshAttempts++;
     this.refreshSubject.next(true);
     
-    console.log(`AuthService: Attempting token refresh (attempt ${this.failedRefreshAttempts}/${this.MAX_REFRESH_RETRIES})`);
+    console.log('About to send HTTP refresh request', { url: `${this.apiUrl}/refresh` });
     
     return this.http.post<LoginResponse>(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
+      timeout(10000), // 10 seconds timeout
       tap(res => {
+        console.log('Refresh HTTP request succeeded', res);
         this.handleSuccessfulAuth(res);
         this.failedRefreshAttempts = 0; // Reset retry count on success
         this.isRefreshing = false;
         this.refreshTokenSubject.next(res.token);
         this.refreshSubject.next(false);
-        console.log('AuthService: Token refresh successful');
       }),
       map(res => res.token),
       catchError(error => {
+        console.log('Refresh HTTP request failed', error);
         this.isRefreshing = false;
         this.refreshTokenSubject.next(null);
         this.refreshSubject.next(false);
-        console.error('AuthService: Token refresh failed', error);
-        
         if (this.failedRefreshAttempts >= this.MAX_REFRESH_RETRIES) {
-          console.error('AuthService: Max refresh retries reached, logging out');
           this.logout();
         }
-        
         return throwError(() => error);
       })
     );
