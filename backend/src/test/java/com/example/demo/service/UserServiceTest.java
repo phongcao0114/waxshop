@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.UserProfileDTO;
 import com.example.demo.dto.UserProfileUpdateDTO;
+import com.example.demo.dto.PasswordChangeDTO;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,10 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class UserServiceTest {
@@ -23,14 +25,16 @@ class UserServiceTest {
     private UserService userService;
 
     private User user;
+    private BCryptPasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        passwordEncoder = new BCryptPasswordEncoder();
         user = new User();
         user.setId(1);
         user.setEmail("test@example.com");
-        user.setPassword("password");
+        user.setPassword(passwordEncoder.encode("oldpassword"));
         user.setName("Test User");
         user.setPhone("1234567890");
         user.setRole("USER");
@@ -55,6 +59,57 @@ class UserServiceTest {
         assertEquals("Updated Name", dto.getName());
         assertEquals("0987654321", dto.getPhone());
         verify(userRepository, times(1)).save(any(User.class));
+    }
+
+    @Test
+    void changePassword_WithValidCurrentPassword_UpdatesPassword() {
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
+        
+        PasswordChangeDTO passwordChangeDTO = new PasswordChangeDTO();
+        passwordChangeDTO.setCurrentPassword("oldpassword");
+        passwordChangeDTO.setNewPassword("newpassword123");
+        
+        assertDoesNotThrow(() -> userService.changePassword("test@example.com", passwordChangeDTO));
+        verify(userRepository, times(1)).save(any(User.class));
+    }
+
+    @Test
+    void changePassword_WithInvalidCurrentPassword_ThrowsException() {
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
+        
+        PasswordChangeDTO passwordChangeDTO = new PasswordChangeDTO();
+        passwordChangeDTO.setCurrentPassword("wrongpassword");
+        passwordChangeDTO.setNewPassword("newpassword123");
+        
+        assertThrows(IllegalArgumentException.class, () -> 
+            userService.changePassword("test@example.com", passwordChangeDTO));
+        verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    void changePassword_WithEmptyNewPassword_ThrowsException() {
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
+        
+        PasswordChangeDTO passwordChangeDTO = new PasswordChangeDTO();
+        passwordChangeDTO.setCurrentPassword("oldpassword");
+        passwordChangeDTO.setNewPassword("");
+        
+        assertThrows(IllegalArgumentException.class, () -> 
+            userService.changePassword("test@example.com", passwordChangeDTO));
+        verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    void changePassword_WithShortNewPassword_ThrowsException() {
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
+        
+        PasswordChangeDTO passwordChangeDTO = new PasswordChangeDTO();
+        passwordChangeDTO.setCurrentPassword("oldpassword");
+        passwordChangeDTO.setNewPassword("123");
+        
+        assertThrows(IllegalArgumentException.class, () -> 
+            userService.changePassword("test@example.com", passwordChangeDTO));
+        verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
@@ -85,7 +140,7 @@ class UserServiceTest {
     @Test
     void getUserById_ThrowsWhenNotFound() {
         when(userRepository.findById(99)).thenReturn(Optional.empty());
-        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> userService.getUserById(99L));
+        assertThrows(IllegalArgumentException.class, () -> userService.getUserById(99L));
     }
 
     @Test

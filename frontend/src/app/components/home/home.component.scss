@@ -550,6 +550,7 @@ h1, h2, h3, h4 {
 
 .contact {
   background: none;
+  margin-top: 8rem;
 }
 
 .contact::before {
@@ -693,8 +694,27 @@ h1, h2, h3, h4 {
   padding: 1rem 2rem;
   border-radius: 10px;
   box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
-  z-index: 10000;
+  z-index: 999999 !important; /* Ultra high z-index to ensure it's always on top */
   animation: slideInUp 0.3s ease;
+  /* Additional safeguards */
+  pointer-events: auto;
+  isolation: isolate;
+  /* Ensure it's above Material Design overlays and other high z-index elements */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Ensure toast is always visible even with Material Design overlays */
+.toast-message::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  background: inherit;
+  border-radius: inherit;
 }
 
 @keyframes slideInUp {
