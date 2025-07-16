@@ -1,122 +1,119 @@
-# WaxShop - Ecommerce Platform
+# Romance of Europe - Parisian & Greek Statue Ecommerce Platform
 
-A full-stack ecommerce platform built with Java Spring Boot backend, Angular frontend, and MySQL database. Containerized with Docker for easy deployment and development. Currently deployed on AWS EC2.
+## Introduction
+Romance of Europe is a full-stack ecommerce platform inspired by Parisian and Greek styles, specializing in the sale of statues. The application features a modern Angular frontend, a robust Java Spring Boot backend, and a MySQL database. Users can browse a curated collection of statues, manage their shopping cart, and place orders. Admins can manage products, categories, and orders securely.
 
-## 🚀 Quick Start
+> **Tip:** Visit the Home page on the UI for an engaging overview and introduction to the app experience.
 
-### Prerequisites
-- [Docker](https://www.docker.com/products/docker-desktop) installed
+## Architecture / Structure Overview
 
-### Local Development
-```bash
-# Clone the repository
-git clone <repo-url>
-cd waxshop
+### Frontend
+- **Framework:** Angular (TypeScript, SCSS)
+- **Responsibilities:**
+  - User interface and experience
+  - Product browsing, cart, and checkout flows
+  - Admin dashboard for managing users, products, categories, and orders
+  - Communicates with backend via REST API
 
-# Build and run everything
-docker-compose -f docker-compose.build.yml up --build
+### Backend
+- **Tech Stack:** Java 17+, Spring Boot, JPA/Hibernate
+- **Responsibilities:**
+  - RESTful API for all business logic
+  - Authentication (JWT), role-based access control
+  - Order, product, user, and category management
+  - File upload handling (product images)
 
-# Access the application
-# Frontend: http://localhost:4200
-# Backend API: http://localhost:8080
-```
+### Database
+- **Type:** MySQL 8.0
+- **Structure Overview:**
+  - Users (with roles: USER, ADMIN)
+  - Products, Categories
+  - Orders, Order Items
+  - Cart
+  - Schema auto-created on first run
 
-### AWS EC2 Testing
-The application is currently deployed on AWS EC2:
-- **Frontend:** http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com
-- **Backend API:** http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com:8080
+## Features by Role
 
-For deployment instructions, see [Deployment Guide](docs/DEPLOYMENT.md).
+### User
+- Register, login (JWT authentication)
+- Browse/search products by category
+- Manage shopping cart
+- Place and view orders
+- Update profile and password
 
-## 📋 Features by Role
+### Admin
+- Dashboard overview
+- Manage users (view, update, enable/disable, delete)
+- Manage products (add, edit, delete, upload images)
+- Manage categories
+- Manage and update orders
 
-### 👤 User Features
-- **Authentication:** JWT-based login/register system
-- **Product Browsing:** View products by category with search functionality
-- **Shopping Cart:** Add/remove items, update quantities
-- **Order Management:** Place orders, view order history
-- **User Profile:** View and update personal information
+For a full list of API endpoints by role, see [README_API_BY_ROLE.md](README_API_BY_ROLE.md).
 
-### 👨‍💼 Admin Features
-- **Dashboard:** Overview of users, products, orders, and categories
-- **User Management:** View and manage user accounts
-- **Product Management:** Add, edit, and delete products with image uploads
-- **Category Management:** Create and manage product categories
-- **Order Management:** View and update order statuses
+## Deployment Guide
 
-### 🔧 Technical Features
-- **Security:** JWT authentication, role-based access control
-- **File Upload:** Product image upload and storage
-- **Database:** MySQL with automatic schema creation
-- **API:** RESTful endpoints with proper error handling
-- **Frontend:** Responsive Angular application with modern UI
+### Local Deployment
+1. **Clone the repository:**
+   ```bash
+   git clone <repo-url>
+   cd waxshop
+   ```
+2. **Build and run with Docker Compose:**
+   ```bash
+   docker-compose -f docker-compose.build.yml up --build
+   ```
+3. **Access the application:**
+   - Frontend: http://localhost:4200
+   - Backend API: http://localhost:8080
+4. **Stop containers:**
+   ```bash
+   docker-compose -f docker-compose.build.yml down
+   ```
+5. **Rebuild after code changes:**
+   ```bash
+   docker-compose -f docker-compose.build.yml up --build
+   ```
 
-## 🏗️ Architecture
+### EC2 Deployment
+1. **Build and push Docker images:**
+   ```bash
+   ./build-and-push.sh
+   ```
+2. **Deploy on EC2:**
+   - Copy `docker-compose.aws.yml` and `deploy.sh` to your EC2 instance.
+   - Run the deployment script:
+     ```bash
+     ./deploy.sh
+     ```
+3. **Verify deployment:**
+   - Frontend: http://<ec2-public-dns>
+   - Backend API: http://<ec2-public-dns>:8080
 
-The application follows a modern microservices architecture:
+## Testing
 
-- **Frontend:** Angular SPA with TypeScript and SCSS
-- **Backend:** Spring Boot REST API with Java 17+
-- **Database:** MySQL 8.0 with JPA/Hibernate
-- **Containerization:** Docker and Docker Compose
-- **Deployment:** AWS EC2 with Docker
+### Local Testing
+- Access the frontend and backend URLs in your browser.
+- Use the default admin account to log in and test admin features.
+- Register a new user and test user features (cart, orders, etc).
 
-For detailed architecture information, see [Architecture Overview](docs/ARCHITECTURE.md).
+### EC2 Frontend and Backend Testing
+- Visit the live application URL (see below).
+- Test all user and admin flows as above.
 
-## 📚 Documentation
+### Accessing and Verifying the EC2 Database
+- SSH into your EC2 instance.
+- Use the MySQL CLI or a database tool to connect to the running MySQL container:
+  ```bash
+  docker exec -it <mysql-container-name> mysql -u root -p
+  ```
+- Check tables, users, orders, etc.
 
-- **[Architecture Overview](docs/ARCHITECTURE.md)** - Detailed breakdown of frontend, backend, and database components
-- **[API Documentation](docs/API.md)** - Complete API reference with request/response examples
-- **[Deployment Guide](docs/DEPLOYMENT.md)** - Instructions for local and AWS EC2 deployment
-
-## 🛠️ Development
-
-### Project Structure
-```
-waxshop/
-├── backend/          # Spring Boot API (Java)
-├── frontend/         # Angular SPA
-├── docs/            # Documentation
-├── docker-compose.*.yml  # Docker configurations
-└── deploy.sh        # AWS deployment script
-```
-
-### Default Admin Account
-On first run, the following admin account is automatically created:
+## Default Admin Account
 - **Email:** `admin@admin.com`
 - **Password:** `admin123`
 - **Role:** `ADMIN`
+- This account is created automatically on first run. Change the password after first login for security.
 
-### Useful Commands
-```bash
-# Stop all containers
-docker-compose -f docker-compose.build.yml down
-
-# Rebuild after code changes
-docker-compose -f docker-compose.build.yml up --build
-
-# View logs
-docker-compose -f docker-compose.build.yml logs -f
-
-# Build and push to Docker Hub
-./build-and-push.sh
-```
-
-## 🔗 Links
-
+## Links
 - **Live Application:** http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com
-- **API Documentation:** [docs/API.md](docs/API.md)
-- **Deployment Guide:** [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
-- **Architecture Details:** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test locally with Docker Compose
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License.
+- **API Documentation:** [README_API_BY_ROLE.md](README_API_BY_ROLE.md)
