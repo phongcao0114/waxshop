@@ -74,17 +74,34 @@ For a full list of API endpoints by role, see [README_API_BY_ROLE.md](README_API
    docker-compose -f docker-compose.build.yml up --build
    ```
 
+### Build and Push Docker Images
+
+You can build and push Docker images using the `build-and-push.sh` script. The script supports the following modes:
+
+```bash
+# Build and push both (default)
+./build-and-push.sh
+
+# Build and push only backend
+./build-and-push.sh backend
+
+# Build and push only frontend
+./build-and-push.sh frontend
+
+# Build and push both explicitly
+./build-and-push.sh both
+```
+
 ### EC2 Deployment
 1. **Build and push Docker images:**
    ```bash
    ./build-and-push.sh
    ```
-2. **Deploy on EC2:**
-   - Copy `docker-compose.aws.yml`, `deploy.sh`, and the `backend/db-init/` folder to your EC2 instance.
-   - Run the deployment script:
-     ```bash
-     ./deploy.sh
-     ```
+2. **Run deploy script (provide your keypair .pem path):**
+   ```bash
+   chmod +x deploy-ec2.sh
+   ./deploy-ec2.sh /path/to/your-keypair.pem
+   ```
 3. **Verify deployment:**
    - Frontend: [http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com/](http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com/)
    - Backend API: [http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com:8080](http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com:8080)
