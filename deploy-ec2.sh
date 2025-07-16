@@ -5,13 +5,18 @@
 # =============================
 #
 # This script copies necessary deployment files to the EC2 instance and runs deploy.sh remotely.
-# Usage: ./deploy-ec2.sh
+# Usage: ./deploy-ec2.sh <path-to-keypair.pem>
 #
 
 set -e
 
-# Configurable variables
-KEY_PAIR="myappkeypair.pem"
+# Check for keypair argument
+if [ -z "$1" ]; then
+  echo "Usage: $0 <path-to-keypair.pem>"
+  exit 1
+fi
+
+KEY_PAIR="$1"
 EC2_USER="ec2-user"
 EC2_HOST="ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com"
 REMOTE_PATH="~"
