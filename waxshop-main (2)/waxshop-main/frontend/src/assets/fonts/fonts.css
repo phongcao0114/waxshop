@@ -1,0 +1,49 @@
+/* Playfair Display */
+@font-face {
+    font-family: 'Playfair Display';
+    font-style: normal;
+    font-weight: 400;
+    src: url('./PlayfairDisplay-Regular.woff2') format('woff2');
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'Playfair Display';
+    font-style: normal;
+    font-weight: 700;
+    src: url('./PlayfairDisplay-Bold.woff2') format('woff2');
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'Playfair Display';
+    font-style: normal;
+    font-weight: 900;
+    src: url('./PlayfairDisplay-Black.woff2') format('woff2');
+    font-display: swap;
+  }
+  
+  /* Montserrat */
+  @font-face {
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 300;
+    src: url('./Montserrat-Light.woff2') format('woff2');
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 400;
+    src: url('./Montserrat-Regular.woff2') format('woff2');
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 600;
+    src: url('./Montserrat-SemiBold.woff2') format('woff2');
+    font-display: swap;
+  }

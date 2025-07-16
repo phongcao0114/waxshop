@@ -1,0 +1,68 @@
+<div class="auth-page-container">
+  <div class="auth-card">
+    <h2 class="auth-title">Register</h2>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="auth-field">
+        <label for="name">Name *</label>
+        <input id="name" formControlName="name" type="text" />
+        @if (form.get('name')?.invalid && form.get('name')?.touched) {
+          <div class="error-message">
+            Name is required and must be at least 2 characters
+          </div>
+        }
+      </div>
+      <div class="auth-field">
+        <label for="phone">Phone *</label>
+        <input id="phone" formControlName="phone" type="text" />
+        @if (form.get('phone')?.invalid && form.get('phone')?.touched) {
+          <div class="error-message">
+            @if (form.get('phone')?.errors?.['required']) {
+              Phone number is required
+            }
+            @if (form.get('phone')?.errors?.['pattern']) {
+              Phone number must start with 0 and be 10–11 digits
+            }
+          </div>
+        }
+      </div>
+      <div class="auth-field">
+        <label for="email">Email *</label>
+        <input id="email" formControlName="email" type="email" />
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+          <div class="error-message">
+            Valid email is required
+          </div>
+        }
+      </div>
+      <div class="auth-field">
+        <label for="password">Password *</label>
+        <input id="password" formControlName="password" type="password" />
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+          <div class="error-message">
+            Password (min 6 chars) is required
+          </div>
+        }
+      </div>
+      <div class="auth-field">
+        <label for="confirmPassword">Confirm Password *</label>
+        <input id="confirmPassword" formControlName="confirmPassword" type="password" />
+        @if (form.hasError('notMatching') && form.get('confirmPassword')?.touched) {
+          <div class="error-message">
+            Passwords do not match
+          </div>
+        }
+      </div>
+      <button type="submit" [disabled]="loading || form.invalid" class="auth-btn">Register</button>
+      @if (loading) {
+        <div class="spinner">Loading...</div>
+      }
+      @if (error) {
+        <div class="toast error">{{ error }}</div>
+      }
+      @if (success) {
+        <div class="toast success">{{ success }}</div>
+      }
+    </form>
+    <p class="auth-link-text">Already have an account? <a routerLink="/login" class="auth-link">Login</a></p>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+<div class="admin-dashboard">
+  <div class="dashboard-header">
+  </div>
+
+  <!-- Error Display -->
+  @if (error) {
+    <div class="error-message">
+      {{ error }}
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (loading) {
+    <div class="loading">
+      Loading dashboard data...
+    </div>
+  }
+
+  <!-- Dashboard Content -->
+  @if (!loading && !error && currentUser?.role === 'ADMIN') {
+    <div class="dashboard-content">
+      <!-- Statistics Cards moved to shared layout component -->
+    </div>
+  }
+</div> 
