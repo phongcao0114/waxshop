@@ -1,0 +1,118 @@
+FULL-STACK E-COMMERCE PROJECT PROMPT
+Build a full-stack e-commerce web application using Java (Spring Boot), Angular (as a Single-Page Application), and SQL Server. The application must be containerized using Docker and runnable with a single docker-compose up command.
+
+This project simulates a simplified version of Lazada/Shopee and focuses on core e-commerce features, including product image upload.
+
+1. Architecture
+Frontend: Angular SPA using Angular Router and HttpClient
+
+Backend: Spring Boot with RESTful APIs, JWT-based authentication, and file upload support
+
+Database: SQL Server, connected via JDBC
+
+Containerization: Docker and Docker Compose (backend, frontend, and database)
+
+2. User Roles
+User:
+
+Register and log in
+
+View products
+
+Add to cart and checkout
+
+View past orders
+
+Admin:
+
+Log in with admin role
+
+Manage products (create, upload image, edit, delete)
+
+View all user orders
+
+3. Authentication and Authorization
+JWT-based authentication
+
+Token stored in frontend and sent with API requests
+
+Route-based access control for user vs admin
+
+4. Functional Requirements
+For Users:
+
+Register
+
+Log in
+
+Browse product list
+
+View product details
+
+Add items to shopping cart
+
+View and edit cart
+
+Checkout (with name and shipping address)
+
+View order history
+
+For Admin:
+
+Log in as admin
+
+Add, edit, delete products (with image upload)
+
+View all user orders with details
+
+5. Database Schema (Simplified)
+User: id, email, password, role
+
+Category: id, name
+
+Product: id, name, price, stock, description, image_url, category_id
+
+Order: id, user_id, date, status
+
+OrderItem: id, order_id, product_id, quantity, price
+
+6. Angular SPA Routes
+/ – Homepage / product list
+
+/product/:id – Product detail page
+
+/cart – Cart page
+
+/checkout – Checkout page
+
+/orders – User order history
+
+/login – Login page
+
+/register – Register page
+
+/admin/products – Admin: manage products
+
+/admin/orders – Admin: manage orders
+
+7. Docker Requirements
+Spring Boot backend container
+
+Angular frontend container (served via Nginx or ng serve)
+
+SQL Server database container
+
+All services connected via a single docker-compose.yml
+
+Uploads folder exposed via Docker volume for image persistence
+
+8. Constraints
+Must be buildable and testable in 5 days
+
+Focus on essential logic and functionality only
+
+No third-party payment gateway integration
+
+Keep UI simple and minimal
+
+Make everything as simple as possible

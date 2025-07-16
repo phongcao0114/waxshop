@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: jackwind9000/ecommerce-frontend:latest
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    environment:
+      - BACKEND_URL=http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com:8080
+      - PUBLIC_IP=52.64.186.20
+      - PUBLIC_DNS=ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com
+    restart: unless-stopped
+    container_name: ecommerce_frontend
+
+  backend:
+    image: jackwind9000/ecommerce-backend:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/ecommerce_app?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=YourStrong!Passw0rd
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_PROFILES_ACTIVE=prod
+      - JWT_SECRET=secret123
+      - JWT_EXPIRATION=900000
+      - PUBLIC_IP=52.64.186.20
+      - PUBLIC_DNS=ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com
+    volumes:
+      - uploads-data:/app/uploads
+    restart: unless-stopped
+    depends_on:
+      - db
+    container_name: ecommerce_backend
+
+  db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=YourStrong!Passw0rd
+      - MYSQL_DATABASE=ecommerce_app
+      - MYSQL_USER=ecommerce_user
+      - MYSQL_PASSWORD=ecommerce_pass
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db-init/create-db.sql:/docker-entrypoint-initdb.d/01-create-db.sql:ro
+      - ./db-init/init-db.sql:/docker-entrypoint-initdb.d/02-init-db.sql:ro
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    container_name: mysql_db
+
+volumes:
+  db_data:
+  uploads-data: 

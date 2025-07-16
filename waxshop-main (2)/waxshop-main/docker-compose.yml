@@ -1,0 +1,60 @@
+# =============================
+# Docker Compose (Legacy - Use docker-compose.build.yml for development)
+# =============================
+#
+# This file is kept for backward compatibility
+# For local development, use: docker-compose -f docker-compose.build.yml up --build
+# For production deployment, use: docker-compose -f docker-compose.deploy.yml up -d
+#
+version: '3.8'
+
+services:
+  # Backend Spring Boot API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: jackwind9000/ecommerce-backend:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    volumes:
+      - ./backend/uploads:/app/uploads
+    depends_on:
+      - db
+
+  # Frontend Angular app
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: jackwind9000/ecommerce-frontend:latest
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    container_name: ecommerce_frontend
+
+  # MySQL database
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      - MYSQL_ROOT_PASSWORD=YourStrong!Passw0rd
+      - MYSQL_DATABASE=ecommerce_app
+      - MYSQL_USER=ecommerce_user
+      - MYSQL_PASSWORD=ecommerce_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./backend/db-init/create-db.sql:/docker-entrypoint-initdb.d/01-create-db.sql:ro
+      - ./backend/db-init/init-db.sql:/docker-entrypoint-initdb.d/02-init-db.sql:ro
+    command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+
+# Volumes for persistent data
+volumes:
+  mysql-data:

@@ -1,0 +1,8 @@
+docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=password -d mysql:tag
+
+
+docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=StrongPassword123" -p 1433:1433 --name sqlserver -d mcr.microsoft.com/mssql/server:2022-latest
+
+
+
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourStrong!Passw0rd' -e 'MSSQL_ENABLE_HADR=1' -e 'MSSQL_AGENT_ENABLED=true' -e 'MSSQL_SSL_CERT=/certs/sql.crt' -e 'MSSQL_SSL_KEY=/certs/sql.key' -v sqlserver-ssl:/certs -p 1433:1433 --name sqlssl mcr.microsoft.com/mssql/server:2022-latest
