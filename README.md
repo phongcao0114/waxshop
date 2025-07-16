@@ -79,12 +79,11 @@ For a full list of API endpoints by role, see [README_API_BY_ROLE.md](README_API
    ```bash
    ./build-and-push.sh
    ```
-2. **Deploy on EC2:**
-   - Copy `docker-compose.aws.yml`, `deploy.sh`, and the `backend/db-init/` folder to your EC2 instance.
-   - Run the deployment script:
-     ```bash
-     ./deploy.sh
-     ```
+2. **Run deploy script:**
+   ```bash
+   chmod +x deploy-ec2.sh
+   ./deploy-ec2.sh
+   ```
 3. **Verify deployment:**
    - Frontend: [http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com/](http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com/)
    - Backend API: [http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com:8080](http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com:8080)
