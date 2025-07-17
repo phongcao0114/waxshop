@@ -103,8 +103,8 @@ You can build and push Docker images using the `build-and-push.sh` script. The s
    ./deploy-ec2.sh /path/to/your-keypair.pem
    ```
 3. **Verify deployment:**
-   - Frontend: [http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com/](http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com/)
-   - Backend API: [http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com:8080](http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com:8080)
+   - Frontend: [http://ec2-3-104-179-158.ap-southeast-2.compute.amazonaws.com/](http://ec2-3-104-179-158.ap-southeast-2.compute.amazonaws.com/)
+   - Backend API: [http://ec2-3-104-179-158.ap-southeast-2.compute.amazonaws.com:8080](http://ec2-3-104-179-158.ap-southeast-2.compute.amazonaws.com:8080)
 
 ## Testing
 
@@ -132,5 +132,5 @@ You can build and push Docker images using the `build-and-push.sh` script. The s
 - This account is created automatically on first run. Change the password after first login for security.
 
 ## Links
-- **Live Application:** http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com
+- **Live Application:** http://ec2-3-104-179-158.ap-southeast-2.compute.amazonaws.com
 - **API Documentation:** [README_API_BY_ROLE.md](README_API_BY_ROLE.md)

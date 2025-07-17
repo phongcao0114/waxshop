@@ -18,7 +18,7 @@ fi
 
 KEY_PAIR="$1"
 EC2_USER="ec2-user"
-EC2_HOST="ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com"
+EC2_HOST="ec2-3-104-179-158.ap-southeast-2.compute.amazonaws.com"
 REMOTE_PATH="~"
 
 # Ensure correct permissions on the key file

@@ -29,16 +29,16 @@ public class WebConfig {
                             "http://ecommerce_frontend:80",
                             
                             // AWS EC2 IP addresses
-                            "http://52.64.186.20",
-                            "http://52.64.186.20:80",
-                            "http://52.64.186.20:4200",
-                            "http://52.64.186.20:3000",
+                            "http://3.104.179.158",
+                            "http://3.104.179.158:80",
+                            "http://3.104.179.158:4200",
+                            "http://3.104.179.158:3000",
                             
                             // AWS EC2 DNS
-                            "http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com",
-                            "http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com:80",
-                            "http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com:4200",
-                            "http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com:3000"
+                            "http://ec2-3-104-179-158.ap-southeast-2.compute.amazonaws.com",
+                            "http://ec2-3-104-179-158.ap-southeast-2.compute.amazonaws.com:80",
+                            "http://ec2-3-104-179-158.ap-southeast-2.compute.amazonaws.com:4200",
+                            "http://ec2-3-104-179-158.ap-southeast-2.compute.amazonaws.com:3000"
                             
                             // For production with domain (when you have one)
                             // "https://yourdomain.com",

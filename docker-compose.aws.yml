@@ -8,9 +8,9 @@ services:
     depends_on:
       - backend
     environment:
-      - BACKEND_URL=http://ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com:8080
-      - PUBLIC_IP=52.64.186.20
-      - PUBLIC_DNS=ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com
+      - BACKEND_URL=http://ec2-3-104-179-158.ap-southeast-2.compute.amazonaws.com:8080
+      - PUBLIC_IP=3.104.179.158
+      - PUBLIC_DNS=ec2-3-104-179-158.ap-southeast-2.compute.amazonaws.com
     restart: unless-stopped
     container_name: ecommerce_frontend
 
@@ -26,8 +26,8 @@ services:
       - SPRING_PROFILES_ACTIVE=prod
       - JWT_SECRET=secret123
       - JWT_EXPIRATION=900000
-      - PUBLIC_IP=52.64.186.20
-      - PUBLIC_DNS=ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com
+      - PUBLIC_IP=3.104.179.158
+      - PUBLIC_DNS=ec2-3-104-179-158.ap-southeast-2.compute.amazonaws.com
     volumes:
       - uploads-data:/app/uploads
     restart: unless-stopped

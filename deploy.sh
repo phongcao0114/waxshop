@@ -13,8 +13,8 @@ set -e  # Exit on any error
 echo "🚀 Starting AWS deployment process..."
 
 # Set environment variables
-export PUBLIC_IP="52.64.186.20"
-export PUBLIC_DNS="ec2-52-64-186-20.ap-southeast-2.compute.amazonaws.com"
+export PUBLIC_IP="3.104.179.158"
+export PUBLIC_DNS="ec2-3-104-179-158.ap-southeast-2.compute.amazonaws.com"
 export BACKEND_URL="http://${PUBLIC_IP}:8080"
 
 # Check if docker-compose.aws.yml exists, if not create it
